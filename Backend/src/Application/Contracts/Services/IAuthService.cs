@@ -65,7 +65,7 @@ public interface IAuthService
     /// Logs out the user by invalidating the provided refresh token.
     /// </summary>
     /// <param name="refreshToken">The refresh token to invalidate.</param>
-    Task LogoutAsync(string refreshToken, CancellationToken cancellati1onToken = default);
+    Task LogoutAsync(string refreshToken, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Retrieves the current user's information based on the provided user ID.

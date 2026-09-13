@@ -4,7 +4,6 @@ public record TarotCard(string Code, string Name);
 
 /// <summary>
 /// Contains the canonical list of all 78 valid tarot card codes.
-/// This mirrors the list defined in Frontend/src/constants/tarot.constants.ts.
 /// </summary>
 public static class TarotConstants
 {
