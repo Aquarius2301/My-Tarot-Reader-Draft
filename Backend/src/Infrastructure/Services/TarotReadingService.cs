@@ -1,0 +1,124 @@
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using MyTarotReader.Application.Common.Exceptions;
+using MyTarotReader.Application.Constants.Errors;
+using MyTarotReader.Application.Constants.Tarot;
+using MyTarotReader.Application.Contracts.Persistence;
+using MyTarotReader.Application.Contracts.Services;
+using MyTarotReader.Domain.Entities;
+using StackExchange.Redis;
+
+namespace MyTarotReader.Infrastructure.Services;
+
+public class TarotReadingService(IAppDbContext context, IConnectionMultiplexer redis)
+    : ITarotReadingService
+{
+    private readonly IAppDbContext _context = context;
+    private const string KeyPrefix = "tarot:draw:";
+    private static readonly TimeSpan DrawCooldown = TimeSpan.FromHours(12);
+    private readonly IConnectionMultiplexer _redis = redis;
+
+    public async Task CreateDrawForAuthAsync(
+        CreateDrawForAuthRequest request,
+        Guid userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var entity = new TarotReading
+        {
+            CardCode = request.CardCode,
+            IsReversed = request.IsReversed,
+            UserId = userId,
+        };
+
+        _context.TarotReadings.Add(entity);
+
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<GetLastDrawnCardForAuthResult?> GetLastDrawnCardForAuthAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var tarotCard = await _context
+            .TarotReadings.AsNoTracking()
+            .Where(r => r.UserId == userId)
+            .OrderByDescending(r => r.CreatedAt)
+            .Select(t => new GetLastDrawnCardForAuthResult(t.CardCode, t.IsReversed))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return tarotCard;
+    }
+
+    public async Task CreateDrawForGuestAsync(
+        CreateDrawForGuestRequest request,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var db = _redis.GetDatabase();
+        var key = KeyPrefix + request.GuestKey;
+        var record = new DrawRecord(
+            DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            request.CardCode,
+            request.IsReversed
+        );
+        var value = JsonSerializer.Serialize(record);
+        var set = await db.StringSetAsync(
+            key,
+            value,
+            DrawCooldown,
+            When.NotExists,
+            CommandFlags.None
+        );
+        if (!set)
+        {
+            throw new TooManyRequestsException(TarotReadingErrorCode.DrawnAlready);
+        }
+    }
+
+    record DrawRecord(long DrawnAtUnixSeconds, string CardCode, bool IsReversed);
+
+    public async Task<GetLastDrawnCardForGuestResult> GetLastDrawnCardForGuestAsync(
+        string guestKey,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var db = _redis.GetDatabase();
+        var key = KeyPrefix + guestKey;
+        var result = await db.StringGetWithExpiryAsync(key);
+        if (!result.Value.HasValue)
+        {
+            return new GetLastDrawnCardForGuestResult("", false, 0);
+        }
+
+        long remaining =
+            result.Expiry?.TotalSeconds > 0 ? (long)result.Expiry.Value.TotalSeconds : 0;
+
+        DrawRecord? record;
+        try
+        {
+            record = JsonSerializer.Deserialize<DrawRecord>(result.Value!);
+        }
+        catch (JsonException)
+        {
+            record = null;
+        }
+
+        return new GetLastDrawnCardForGuestResult(
+            record?.CardCode ?? "",
+            record?.IsReversed ?? false,
+            remaining
+        );
+    }
+
+    public async Task RemoveDrawForGuestAsync(
+        string guestKey,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var db = _redis.GetDatabase();
+        var key = KeyPrefix + guestKey;
+        await db.KeyDeleteAsync(key);
+    }
+}
