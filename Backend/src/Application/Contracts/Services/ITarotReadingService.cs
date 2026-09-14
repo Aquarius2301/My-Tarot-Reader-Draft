@@ -42,6 +42,8 @@ public interface ITarotReadingService
     /// <param name="request"><see cref="CreateDrawForGuestRequest"/> containing the guest key, card code, and reversed status.</param>
     /// <exception cref="TooManyRequestsException">Thrown when the user has already drawn a card.</exception>
     /// <remarks>The card code saved in redis instead of the database for guest users. A new card can be drawn every 12 hours.</remarks>
+    /// <exception cref="BadRequestException">Thrown when guest key is empty or card code is invalid.</exception>
+    /// <exception cref="TooManyRequestsException">Thrown when the user has already drawn a card.</exception>
     Task CreateDrawForGuestAsync(
         CreateDrawForGuestRequest request,
         CancellationToken cancellationToken = default
@@ -63,6 +65,7 @@ public interface ITarotReadingService
     /// </summary>
     /// <param name="request"><see cref="CreateDrawForAuthRequest"/> containing the card code and reversed status.</param>
     /// <param name="userId">The authenticated user's ID.</param>
+    /// <exception cref="BadRequestException">Thrown when the card code is invalid.</exception>
     Task CreateDrawForAuthAsync(
         CreateDrawForAuthRequest request,
         Guid userId,
