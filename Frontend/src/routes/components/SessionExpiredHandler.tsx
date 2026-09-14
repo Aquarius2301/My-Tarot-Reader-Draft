@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { AUTH_SESSION_EXPIRED_EVENT } from "@/constants";
-import { AUTH_QUERY_KEY } from "@/hooks/api/queryKey";
+import { AUTH_QUERY_KEY } from "@/hooks/api";
 import { WEB_URL } from "../url.routes";
 
 /**
