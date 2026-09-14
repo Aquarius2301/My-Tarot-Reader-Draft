@@ -2,6 +2,7 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using MyTarotReader.Application.Common.Exceptions;
+using MyTarotReader.Application.Common.Validators;
 using MyTarotReader.Application.Constants.Errors;
 using MyTarotReader.Application.Contracts.Services;
 using MyTarotReader.Domain.Entities;
@@ -44,7 +45,12 @@ public class TarotReadingServiceTests
         redis
             .Setup(r => r.GetDatabase(It.IsAny<int>(), It.IsAny<object>()))
             .Returns(redisDb.Object);
-        var service = new TarotReadingService(db, redis.Object);
+        var service = new TarotReadingService(
+            db,
+            redis.Object,
+            new CreateDrawForAuthRequestValidator(),
+            new CreateDrawForGuestRequestValidator()
+        );
         return (service, redisDb);
     }
 
@@ -57,7 +63,12 @@ public class TarotReadingServiceTests
     {
         var db = CreateInMemoryContext();
         var redis = new Mock<IConnectionMultiplexer>();
-        var service = new TarotReadingService(db, redis.Object);
+        var service = new TarotReadingService(
+            db,
+            redis.Object,
+            new CreateDrawForAuthRequestValidator(),
+            new CreateDrawForGuestRequestValidator()
+        );
         return (service, db, redis);
     }
 
@@ -402,6 +413,64 @@ public class TarotReadingServiceTests
         var act = async () => await service.RemoveDrawForGuestAsync("guest-1");
 
         await act.Should().NotThrowAsync();
+    }
+
+    #endregion
+
+    #region Validation
+
+    /// <summary>
+    /// An invalid card code is rejected before any draw is created — the service throws
+    /// a generic <see cref="BadRequestException"/> whose ErrorCode becomes the response's
+    /// Message (no field-level Data), and nothing is written to the DB.
+    /// </summary>
+    [Fact]
+    public async Task CreateDrawForAuth_InvalidCard_ThrowsBadRequest()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+
+        var act = async () =>
+            await service.CreateDrawForAuthAsync(
+                new CreateDrawForAuthRequest(InvalidCard, true),
+                userId
+            );
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidCardCode);
+        db.TarotReadings.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// An invalid card code for a guest draw is rejected before Redis is touched — the
+    /// service throws a generic <see cref="BadRequestException"/> (error in Message), and
+    /// StringSetAsync is never called.
+    /// </summary>
+    [Fact]
+    public async Task CreateDrawForGuest_InvalidCard_ThrowsBadRequest()
+    {
+        var (service, dbMock) = CreateSut();
+
+        var act = async () =>
+            await service.CreateDrawForGuestAsync(
+                new CreateDrawForGuestRequest("guest-1", InvalidCard, false)
+            );
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidCardCode);
+        dbMock.Verify(
+            d =>
+                d.StringSetAsync(
+                    It.IsAny<RedisKey>(),
+                    It.IsAny<RedisValue>(),
+                    It.IsAny<TimeSpan?>(),
+                    It.IsAny<When>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Never
+        );
     }
 
     #endregion

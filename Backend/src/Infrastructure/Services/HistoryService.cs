@@ -16,7 +16,8 @@ public class HistoryService(IAppDbContext context) : IHistoryService
     )
     {
         var history = await _context
-            .TarotReadings.Where(r => r.UserId == userId)
+            .TarotReadings.AsNoTracking()
+            .Where(r => r.UserId == userId)
             .OrderByDescending(r => r.CreatedAt)
             .Select(r => new GetHistoryResult(r.Id, r.CardCode, r.IsReversed, r.CreatedAt))
             .ToListAsync(cancellationToken);

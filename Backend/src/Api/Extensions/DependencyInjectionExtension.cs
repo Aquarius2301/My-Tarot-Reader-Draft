@@ -42,6 +42,11 @@ public static class DependencyInjectionExtension
             CreateDrawForAuthRequestValidator
         >();
 
+        services.AddScoped<
+            IValidator<CreateDrawForGuestRequest>,
+            CreateDrawForGuestRequestValidator
+        >();
+
         return services;
     }
 }

@@ -1,24 +1,17 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyTarotReader.Api.Helpers;
 using MyTarotReader.Application.Common.Models;
 using MyTarotReader.Application.Contracts.Services;
-using AppValidationException = MyTarotReader.Application.Common.Exceptions.ValidationException;
 
 namespace MyTarotReader.Api.Controllers;
 
 [Route("api/tarot-reading")]
 [ApiController]
 [ProducesErrorResponseType(typeof(ApiResponse<object>))]
-public class TarotReadingController(
-    ITarotReadingService service,
-    IValidator<CreateDrawForAuthRequest> createDrawValidator
-) : ControllerBase
+public class TarotReadingController(ITarotReadingService service) : ControllerBase
 {
     private readonly ITarotReadingService _service = service;
-    private readonly IValidator<CreateDrawForAuthRequest> _createDrawValidator =
-        createDrawValidator;
 
     /// <summary>
     /// Retrieves the last drawn tarot card for an authenticated user.
@@ -53,16 +46,6 @@ public class TarotReadingController(
         CancellationToken cancellationToken
     )
     {
-        var validation = await _createDrawValidator.ValidateAsync(request, cancellationToken);
-        if (!validation.IsValid)
-        {
-            throw new AppValidationException(
-                validation
-                    .Errors.Select(e => new FieldError(e.PropertyName, e.ErrorMessage))
-                    .ToArray()
-            );
-        }
-
         var userId = JwtHelper.GetUserId(HttpContext);
         await _service.CreateDrawForAuthAsync(request, userId, cancellationToken);
         return Ok(ApiResponse.Success());

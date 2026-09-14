@@ -1,8 +1,9 @@
 using System.Text.Json;
+using MyTarotReader.Application.Common.Validators;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MyTarotReader.Application.Common.Exceptions;
 using MyTarotReader.Application.Constants.Errors;
-using MyTarotReader.Application.Constants.Tarot;
 using MyTarotReader.Application.Contracts.Persistence;
 using MyTarotReader.Application.Contracts.Services;
 using MyTarotReader.Domain.Entities;
@@ -10,13 +11,21 @@ using StackExchange.Redis;
 
 namespace MyTarotReader.Infrastructure.Services;
 
-public class TarotReadingService(IAppDbContext context, IConnectionMultiplexer redis)
-    : ITarotReadingService
+public class TarotReadingService(
+    IAppDbContext context,
+    IConnectionMultiplexer redis,
+    IValidator<CreateDrawForAuthRequest> createDrawForAuthValidator,
+    IValidator<CreateDrawForGuestRequest> createDrawForGuestValidator
+) : ITarotReadingService
 {
     private readonly IAppDbContext _context = context;
     private const string KeyPrefix = "tarot:draw:";
     private static readonly TimeSpan DrawCooldown = TimeSpan.FromHours(12);
     private readonly IConnectionMultiplexer _redis = redis;
+    private readonly IValidator<CreateDrawForAuthRequest> _createDrawForAuthValidator =
+        createDrawForAuthValidator;
+    private readonly IValidator<CreateDrawForGuestRequest> _createDrawForGuestValidator =
+        createDrawForGuestValidator;
 
     public async Task CreateDrawForAuthAsync(
         CreateDrawForAuthRequest request,
@@ -24,6 +33,8 @@ public class TarotReadingService(IAppDbContext context, IConnectionMultiplexer r
         CancellationToken cancellationToken = default
     )
     {
+        ValidationHelper.ValidateOrThrow(_createDrawForAuthValidator, request);
+
         var entity = new TarotReading
         {
             CardCode = request.CardCode,
@@ -56,6 +67,8 @@ public class TarotReadingService(IAppDbContext context, IConnectionMultiplexer r
         CancellationToken cancellationToken = default
     )
     {
+        ValidationHelper.ValidateOrThrow(_createDrawForGuestValidator, request);
+
         var db = _redis.GetDatabase();
         var key = KeyPrefix + request.GuestKey;
         var record = new DrawRecord(
