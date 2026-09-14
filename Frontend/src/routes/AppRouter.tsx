@@ -1,7 +1,12 @@
 import { lazy, Suspense } from "react";
 import { Spin } from "antd";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { PublicRoute, ProtectedRoute, RouteTitle } from "./components";
+import {
+  PublicRoute,
+  ProtectedRoute,
+  RouteTitle,
+  SessionExpiredHandler,
+} from "./components";
 import { MainLayout } from "@/components";
 import { WEB_URL } from "./url.routes";
 
@@ -38,6 +43,7 @@ const protectedRoutes: AppRoute[] = [
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <SessionExpiredHandler />
       <Suspense
         fallback={
           <MainLayout>

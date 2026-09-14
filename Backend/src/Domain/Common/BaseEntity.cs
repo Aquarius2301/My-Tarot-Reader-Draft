@@ -13,7 +13,7 @@ public class BaseEntity
     public Guid Id { get; set; } = Guid.NewGuid();
 
     /// <summary> The date and time when the entity was created. </summary>
-    public DateTimeOffset CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     /// <summary> The date and time when the entity was deleted. </summary>
     public DateTimeOffset? DeletedAt { get; set; } = null;

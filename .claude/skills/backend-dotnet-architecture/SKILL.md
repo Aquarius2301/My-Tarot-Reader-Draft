@@ -101,6 +101,7 @@ Example: `AuthController.LoginAsync()` calls `IAuthService.LoginAsync(LoginReque
 **Always use FluentValidation** to validate requests — never validate directly inside the controller.
 
 Follow this pattern (as in `TarotReadingService`):
+
 - Validators live in `Application/Common/Validators` (one file may contain multiple validators for the same service) and are registered in DI via `AddScoped<IValidator<...>, ...>` in `Api/Extensions/DependencyInjectionExtension.cs`.
 - Services trigger validation at the top of their method using the shared helper `ValidationHelper` (`Application/Common/Validators/ValidationHelper.cs`):
   - `ValidationHelper.ValidateOrThrow(validator, request)` → throws `BadRequestException` (generic → error in `Message`).
@@ -134,7 +135,7 @@ Full example for "get a Tarot reading history record by Id" (GET) and "create a 
 namespace Application.Contracts.Services;
 
 /// <summary>Result containing the detail of a single history record.</summary>
-public record GetHistoryResult(Guid Id, string Question, string Result, DateTime CreatedAt);
+public record GetHistoryResult(Guid Id, string Question, string Result, DateTimeOffset CreatedAt);
 
 /// <summary>Request to create a new history record.</summary>
 public record CreateHistoryRequest(Guid UserId, string Question, string Result);

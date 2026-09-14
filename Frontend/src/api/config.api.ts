@@ -6,7 +6,7 @@ import axios, {
 } from "axios";
 import { getVisitorId } from "@/utils";
 import type { ApiErrorResponse, ApiResponse } from "@/types";
-import { WEB_URL } from "@/routes";
+import { AUTH_SESSION_EXPIRED_EVENT } from "@/constants";
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? "";
 
@@ -127,7 +127,9 @@ axiosClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed -> process queue with error, redirect login
         processQueue(refreshError as AxiosError);
-        window.location.href = WEB_URL.guestHome; // Redirect to guest home (login page)
+        // Let the app navigate to the guest home client-side (no full page
+        // reload). SessionExpiredHandler mounted in the router listens for this.
+        window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT));
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
