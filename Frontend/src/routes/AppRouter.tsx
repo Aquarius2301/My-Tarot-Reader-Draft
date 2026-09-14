@@ -12,7 +12,8 @@ import { WEB_URL } from "./url.routes";
 
 const HomePage = lazy(() => import("@/pages/auth/HomePage"));
 const GuestHomePage = lazy(() => import("@/pages/guest/HomePage"));
-const LoginPage = lazy(() => import("@/pages/guest/LoginPage/LoginPage"));
+const LoginPage = lazy(() => import("@/pages/guest/LoginPage"));
+const GuestDrawTarotPage = lazy(() => import("@/pages/guest/DrawPage"));
 
 interface AppRoute {
   titleKey: string;
@@ -30,6 +31,11 @@ const publicRoutes: AppRoute[] = [
     titleKey: "page.login.title",
     path: WEB_URL.login,
     component: LoginPage,
+  },
+  {
+    titleKey: "page.tarot.title",
+    path: WEB_URL.guestDraw,
+    component: GuestDrawTarotPage,
   },
 ];
 const protectedRoutes: AppRoute[] = [

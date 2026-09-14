@@ -51,6 +51,7 @@ export default function HeroContent({ role }: HeroContentProps) {
         <Button
           onClick={() => {
             // navigate(role ? WEB_URL.DRAW : WEB_URL.DRAW_GUEST);
+            navigate(WEB_URL.guestDraw);
           }}
           type="primary"
           size="large"

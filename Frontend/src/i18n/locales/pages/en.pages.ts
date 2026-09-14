@@ -10,6 +10,19 @@ export const enPages = {
       heroUpgradePro: "Upgrade to PRO",
       heroLoginNow: "Login Now",
     },
+    tarot: {
+      parentTitle: "Draw Tarot cards",
+      title: "Draw 1 card",
+      intro:
+        "Clear your mind, focus on your question, then choose a single card.",
+      yourCard: "Your card",
+      upright: "Upright",
+      reversed: "Reversed",
+      drawAgain: "Draw again",
+      saving: "Saving your card…",
+      cooldown:
+        "<strong>Your next draw will be available in {{hours}} hours {{minutes}} minutes. <btn>Log in now</btn> to draw more cards.</strong>",
+    },
     login: {
       title: "Sign in",
       heading: "Unlock your Tarot experience",

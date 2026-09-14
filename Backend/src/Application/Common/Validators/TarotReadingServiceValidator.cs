@@ -21,8 +21,6 @@ public class CreateDrawForGuestRequestValidator : AbstractValidator<CreateDrawFo
 {
     public CreateDrawForGuestRequestValidator()
     {
-        RuleFor(x => x.GuestKey).NotEmpty().WithMessage(TarotReadingErrorCode.InvalidGuestKey);
-
         RuleFor(x => x.CardCode)
             .NotEmpty()
             .WithMessage(TarotReadingErrorCode.InvalidCardCode)

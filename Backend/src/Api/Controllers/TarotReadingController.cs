@@ -6,7 +6,7 @@ using MyTarotReader.Application.Contracts.Services;
 
 namespace MyTarotReader.Api.Controllers;
 
-[Route("api/tarot-reading")]
+[Route("api/tarot")]
 [ApiController]
 [ProducesErrorResponseType(typeof(ApiResponse<object>))]
 public class TarotReadingController(ITarotReadingService service) : ControllerBase
@@ -54,7 +54,10 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
     /// <summary>
     /// Retrieves the last drawn tarot card for a guest user.
     /// </summary>
-    /// <remarks> The card is saved in Redis with a 12-hour cooldown. </remarks>
+    /// <remarks>
+    /// The card is saved in Redis with an initial cooldown.
+    /// Use the "X-Device-Id" header to provide a unique identifier for the guest user.
+    /// </remarks>
     [HttpGet("guest-draw")]
     [ProducesResponseType(
         typeof(ApiResponse<GetLastDrawnCardForGuestResult>),
@@ -62,10 +65,12 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
     )]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetLastDrawnCardForGuestAsync(
-        [FromQuery] string guestKey,
+        // [FromQuery] string guestKey,
         CancellationToken cancellationToken
     )
     {
+        var guestKey = Request.Headers["X-Device-Id"].ToString();
+
         var availability = await _service.GetLastDrawnCardForGuestAsync(
             guestKey,
             cancellationToken
@@ -76,7 +81,10 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
     /// <summary>
     /// Creates a new tarot card draw for a guest user.
     /// </summary>
-    /// <remarks> The card is saved in Redis with a 12-hour cooldown. </remarks>
+    /// <remarks>
+    /// The card is saved in Redis with an initial cooldown.
+    /// Use the "X-Device-Id" header to provide a unique identifier for the guest user.
+    /// </remarks>
     [HttpPost("guest-draw")]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -86,14 +94,16 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
         CancellationToken cancellationToken
     )
     {
+        var guestKey = Request.Headers["X-Device-Id"].ToString();
+
         CookieHelper.Append(
             Response,
             CookieHelper.GuestCookieName,
-            request.GuestKey,
+            guestKey,
             DateTimeOffset.UtcNow.AddDays(1)
         ); // Save the guest key in a cookie for easy to remove key on swagger (testing)
 
-        await _service.CreateDrawForGuestAsync(request, cancellationToken);
+        await _service.CreateDrawForGuestAsync(request, guestKey, cancellationToken);
 
         return Ok(ApiResponse.Success());
     }

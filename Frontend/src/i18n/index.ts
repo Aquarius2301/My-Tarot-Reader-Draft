@@ -4,6 +4,8 @@ import { viPages } from "./locales/pages/vi.pages";
 import { enPages } from "./locales/pages/en.pages";
 import { viComponents } from "./locales/components/vi.components";
 import { enComponents } from "./locales/components/en.components";
+import { viTarot } from "./locales/tarot/vi.tarot";
+import { enTarot } from "./locales/tarot/en.tarot";
 
 /**
  * Merge tarot meanings data into i18n resources under tarot.meanings
@@ -14,12 +16,14 @@ function buildResources() {
       translation: {
         ...viPages,
         ...viComponents,
+        ...viTarot,
       },
     },
     en: {
       translation: {
         ...enPages,
         ...enComponents,
+        ...enTarot,
       },
     },
   };

@@ -10,6 +10,19 @@ export const viPages = {
       heroUpgradePro: "Nâng Cấp PRO",
       heroLoginNow: "Đăng nhập ngay",
     },
+    tarot: {
+      parentTitle: "Rút bài Tarot",
+      title: "Rút 1 lá",
+      intro:
+        "Hãy để tâm trí thư thái, tập trung vào câu hỏi của bạn rồi chọn một lá bài.",
+      yourCard: "Lá bài của bạn",
+      upright: "Xuôi",
+      reversed: "Ngược",
+      drawAgain: "Rút lại",
+      saving: "Đang lưu lá bài của bạn…",
+      cooldown:
+        "<strong>Lượt rút tiếp theo sẽ mở sau {{hours}} giờ {{minutes}} phút. <btn>Đăng nhập ngay</btn> để rút thêm bài.</strong>",
+    },
     login: {
       title: "Đăng nhập",
       heading: "Mở khóa trải nghiệm Tarot",

@@ -3,10 +3,9 @@ namespace MyTarotReader.Application.Contracts.Services;
 /// <summary>
 /// Request for tarot reading services for guest users.
 /// </summary>
-/// <param name="GuestKey">The guest key.</param>
 /// <param name="CardCode">The card code.</param>
 /// <param name="IsReversed">Indicates if the card is reversed.</param>
-public record CreateDrawForGuestRequest(string GuestKey, string CardCode, bool IsReversed);
+public record CreateDrawForGuestRequest(string CardCode, bool IsReversed);
 
 /// <summary>
 /// Result of retrieving the last drawn tarot card for a guest user.
@@ -46,6 +45,7 @@ public interface ITarotReadingService
     /// <exception cref="TooManyRequestsException">Thrown when the user has already drawn a card.</exception>
     Task CreateDrawForGuestAsync(
         CreateDrawForGuestRequest request,
+        string guestKey,
         CancellationToken cancellationToken = default
     );
 

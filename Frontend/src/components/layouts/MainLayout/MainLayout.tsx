@@ -75,6 +75,19 @@ export default function MainLayout({
       label: t("page.home.title"),
       href: user ? WEB_URL.home : WEB_URL.guestHome,
     },
+    {
+      key: "tarot",
+      label: t("page.tarot.parentTitle"),
+      // href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
+      children: [
+        {
+          key: "tarot2",
+          label: t("page.tarot.title"),
+          // href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
+          href: WEB_URL.guestDraw,
+        },
+      ],
+    },
   ].filter(Boolean) as NavItem[];
 
   // Dropdown for user info and logout

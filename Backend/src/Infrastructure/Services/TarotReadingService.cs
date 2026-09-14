@@ -1,8 +1,8 @@
 using System.Text.Json;
-using MyTarotReader.Application.Common.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using MyTarotReader.Application.Common.Exceptions;
+using MyTarotReader.Application.Common.Validators;
 using MyTarotReader.Application.Constants.Errors;
 using MyTarotReader.Application.Contracts.Persistence;
 using MyTarotReader.Application.Contracts.Services;
@@ -64,13 +64,14 @@ public class TarotReadingService(
 
     public async Task CreateDrawForGuestAsync(
         CreateDrawForGuestRequest request,
+        string guestKey,
         CancellationToken cancellationToken = default
     )
     {
         ValidationHelper.ValidateOrThrow(_createDrawForGuestValidator, request);
 
         var db = _redis.GetDatabase();
-        var key = KeyPrefix + request.GuestKey;
+        var key = KeyPrefix + guestKey;
         var record = new DrawRecord(
             DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
             request.CardCode,
