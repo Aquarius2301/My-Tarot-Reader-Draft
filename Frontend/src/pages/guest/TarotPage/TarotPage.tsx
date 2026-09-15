@@ -11,13 +11,14 @@ import {
 } from "@/hooks/api";
 import { WEB_URL } from "@/routes";
 import { convertSecondsToHours } from "@/utils";
-import { Button, Card, Spin, Typography } from "antd";
+import { getErrorMessage } from "@/utils/error.utils";
+import { Button, Card, message, Spin, Typography } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
-export default function GuestDrawTarotPage() {
+export default function GuestTarotPage() {
   const { t, i18n } = useTranslation();
   const { data, isLoading, refetch } = useGetLastDrawnCardForGuest();
   const { mutate, isPending } = useCreateDrawForGuest();
@@ -32,9 +33,7 @@ export default function GuestDrawTarotPage() {
         isReversed: selectedCard.isReversed,
       },
       {
-        onError: () => {
-          <Error type="server" onRetry={() => refetch()} />;
-        },
+        onError: (error) => message.error(getErrorMessage(error)),
       },
     );
   };
@@ -43,7 +42,7 @@ export default function GuestDrawTarotPage() {
     return <Spin fullscreen />;
   }
 
-  if (!data) return null;
+  if (!data) return <Error type="server" onRetry={refetch} />;
 
   if (data.remainingSeconds <= 0) {
     return (

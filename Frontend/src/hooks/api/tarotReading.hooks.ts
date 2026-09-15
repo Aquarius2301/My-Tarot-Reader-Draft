@@ -1,7 +1,13 @@
-import { tarotReadingApi } from "@/api/tarotReading.api";
+import { tarotReadingApi } from "@/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { GET_CARD_FOR_GUEST_QUERY_KEY } from "./queryKey";
-import type { CreateDrawForGuestRequest } from "@/types";
+import {
+  GET_CARD_FOR_AUTH_QUERY_KEY,
+  GET_CARD_FOR_GUEST_QUERY_KEY,
+} from "./queryKey";
+import type {
+  CreateDrawForAuthRequest,
+  CreateDrawForGuestRequest,
+} from "@/types";
 
 export const useGetLastDrawnCardForGuest = (enabled: boolean = true) => {
   return useQuery({
@@ -16,9 +22,28 @@ export const useCreateDrawForGuest = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (request: CreateDrawForGuestRequest) =>
-      tarotReadingApi.createDrawForGuestAsync(request),
+      tarotReadingApi.createDrawForGuest(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GET_CARD_FOR_GUEST_QUERY_KEY });
+    },
+  });
+};
+
+export const useGetLastDrawnCardForAuth = (enabled: boolean = true) => {
+  return useQuery({
+    queryKey: GET_CARD_FOR_AUTH_QUERY_KEY,
+    queryFn: async () => tarotReadingApi.getLastDrawnCardForAuth(),
+    enabled,
+  });
+};
+
+export const useCreateDrawForAuth = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (request: CreateDrawForAuthRequest) =>
+      tarotReadingApi.createDrawForAuth(request),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: GET_CARD_FOR_AUTH_QUERY_KEY });
     },
   });
 };

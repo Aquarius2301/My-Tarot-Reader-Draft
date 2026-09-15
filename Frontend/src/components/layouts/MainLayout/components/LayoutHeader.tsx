@@ -136,7 +136,7 @@ export default function LayoutHeader({
               />
             ) : (
               <Button type="primary" onClick={onLogin}>
-                {t("components.mainLayout.login")}
+                {t("component.mainLayout.login")}
               </Button>
             )}
           </Space>
@@ -163,7 +163,7 @@ export default function LayoutHeader({
             </>
           ) : (
             <Button type="primary" size="small" onClick={onLogin}>
-              {t("components.mainLayout.login")}
+              {t("component.mainLayout.login")}
             </Button>
           )}
           <Button

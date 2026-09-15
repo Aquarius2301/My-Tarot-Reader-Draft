@@ -8,5 +8,7 @@ export const API_URL = {
   tarot: {
     getLastDrawnCardForGuest: "/api/tarot/guest-draw",
     createDrawForGuest: "/api/tarot/guest-draw",
+    getLastDrawnCardForAuth: "/api/tarot/draw",
+    createDrawForAuth: "/api/tarot/draw",
   },
 } as const;

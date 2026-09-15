@@ -110,9 +110,9 @@ public class TarotReadingServiceTests
                 )
             )
             .ReturnsAsync(true);
-        var request = new CreateDrawForGuestRequest("guest-1", ValidCard, true);
+        var request = new CreateDrawForGuestRequest(ValidCard, true);
 
-        await service.CreateDrawForGuestAsync(request);
+        await service.CreateDrawForGuestAsync(request, "guest-1");
 
         dbMock.Verify(
             d =>
@@ -158,9 +158,9 @@ public class TarotReadingServiceTests
             )
             .ReturnsAsync(false);
 
-        var request = new CreateDrawForGuestRequest("guest-1", ValidCard, false);
+        var request = new CreateDrawForGuestRequest(ValidCard, false);
 
-        var act = async () => await service.CreateDrawForGuestAsync(request);
+        var act = async () => await service.CreateDrawForGuestAsync(request, "guest-1");
 
         await act.Should()
             .ThrowAsync<TooManyRequestsException>()
@@ -189,13 +189,15 @@ public class TarotReadingServiceTests
             .ReturnsAsync(true);
 
         await service.CreateDrawForGuestAsync(
-            new CreateDrawForGuestRequest("guest-1", ValidCard, false)
+            new CreateDrawForGuestRequest(ValidCard, false),
+            "guest-1"
         );
 
         // ...the expired key is gone, so a second draw is allowed too.
         var act = async () =>
             await service.CreateDrawForGuestAsync(
-                new CreateDrawForGuestRequest("guest-1", ValidCard, true)
+                new CreateDrawForGuestRequest(ValidCard, true),
+                "guest-1"
             );
 
         await act.Should().NotThrowAsync();
@@ -454,7 +456,8 @@ public class TarotReadingServiceTests
 
         var act = async () =>
             await service.CreateDrawForGuestAsync(
-                new CreateDrawForGuestRequest("guest-1", InvalidCard, false)
+                new CreateDrawForGuestRequest(InvalidCard, false),
+                "guest-1"
             );
 
         await act.Should()

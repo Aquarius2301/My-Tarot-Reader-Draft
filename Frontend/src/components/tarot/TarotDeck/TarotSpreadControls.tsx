@@ -27,10 +27,10 @@ export default function TarotSpreadControls({
   return (
     <Space style={{ marginTop: 44 }}>
       <Typography.Text>
-        {t("components.deck.selected", { count: selectedCount, limit })}
+        {t("component.deck.selected", { count: selectedCount, limit })}
       </Typography.Text>
       <Button onClick={onReshuffle} disabled={busy}>
-        {t("components.deck.reshuffle")}
+        {t("component.deck.reshuffle")}
       </Button>
 
       <Button
@@ -38,12 +38,12 @@ export default function TarotSpreadControls({
         disabled={!isFull || busy || disabledConfirm}
         onClick={onConfirm}
       >
-        {t("components.deck.confirm")}
+        {t("component.deck.confirm")}
       </Button>
 
       {disabledConfirm && (
         <Text type="danger" style={{ marginLeft: 12 }}>
-          {t("components.deck.noEnoughCoin")}
+          {t("component.deck.noEnoughCoin")}
         </Text>
       )}
     </Space>

@@ -28,23 +28,23 @@ const ERROR_CONFIG: Record<
   }
 > = {
   offline: {
-    titleKey: "components.error.offlineTitle",
-    descKey: "components.error.offlineDesc",
+    titleKey: "component.error.offlineTitle",
+    descKey: "component.error.offlineDesc",
     Icon: DisconnectOutlined,
   },
   server: {
-    titleKey: "components.error.serverTitle",
-    descKey: "components.error.serverDesc",
+    titleKey: "component.error.serverTitle",
+    descKey: "component.error.serverDesc",
     Icon: ExclamationCircleOutlined,
   },
   timeout: {
-    titleKey: "components.error.timeoutTitle",
-    descKey: "components.error.timeoutDesc",
+    titleKey: "component.error.timeoutTitle",
+    descKey: "component.error.timeoutDesc",
     Icon: ClockCircleOutlined,
   },
   generic: {
-    titleKey: "components.error.genericTitle",
-    descKey: "components.error.genericDesc",
+    titleKey: "component.error.genericTitle",
+    descKey: "component.error.genericDesc",
     Icon: ReloadOutlined,
   },
 };
@@ -121,7 +121,7 @@ export default function Error({ type, onRetry }: ErrorProps) {
           size="large"
           style={{ marginTop: 24 }}
         >
-          {t("components.error.retry")}
+          {t("component.error.retry")}
         </Button>
       )}
     </div>

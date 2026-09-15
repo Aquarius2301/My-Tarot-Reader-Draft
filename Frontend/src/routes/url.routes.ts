@@ -1,6 +1,8 @@
 export const WEB_URL = {
   guestHome: "/guest",
   login: "/login",
+  guestTarot: "/guest/tarot",
+
   home: "/",
-  guestDraw: "/guest/tarot",
+  tarot: "/tarot",
 } as const;

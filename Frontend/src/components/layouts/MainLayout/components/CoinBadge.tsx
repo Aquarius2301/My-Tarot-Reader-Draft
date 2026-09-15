@@ -82,13 +82,13 @@ export default function CoinBadge({
 
   return (
     <Space size={isMobile ? 8 : 14}>
-      <Tooltip title={t("components.mainLayout.whiteCoin")}>
+      <Tooltip title={t("component.mainLayout.whiteCoin")}>
         <span style={coinStyle()}>
           <CoinIcon color={whiteCoinColor} size={iconSize} />
           <Text style={coinTextStyle()}>{formatCoins(whiteCoin)}</Text>
         </span>
       </Tooltip>
-      <Tooltip title={t("components.mainLayout.redCoin")}>
+      <Tooltip title={t("component.mainLayout.redCoin")}>
         <span style={coinStyle()}>
           <CoinIcon color={COIN_COLORS.red} size={iconSize} />
           <Text style={coinTextStyle()}>{formatCoins(redCoin)}</Text>

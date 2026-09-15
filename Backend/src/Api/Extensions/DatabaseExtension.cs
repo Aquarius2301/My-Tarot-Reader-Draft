@@ -9,7 +9,7 @@ namespace MyTarotReader.Api.Extensions;
 public static class DatabaseExtension
 {
     /// <summary>
-    /// Registers <see cref="AppDbContext"/> using the SQL Server connection string
+    /// Registers <see cref="AppDbContext"/> using the PostgreSQL (Npgsql) connection string
     /// from configuration.
     /// </summary>
     /// <param name="services">The service collection to configure.</param>
@@ -24,7 +24,7 @@ public static class DatabaseExtension
             configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("DefaultConnection is not configured.");
 
-        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
 
         return services;
     }

@@ -7,3 +7,7 @@ export const GET_CARD_FOR_GUEST_QUERY_KEY = [
   ...TAROT_READING_QUERY_KEY,
   "getCardForGuest",
 ] as const;
+export const GET_CARD_FOR_AUTH_QUERY_KEY = [
+  ...TAROT_READING_QUERY_KEY,
+  "getCardForAuth",
+] as const;

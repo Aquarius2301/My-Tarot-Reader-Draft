@@ -83,8 +83,7 @@ export default function MainLayout({
         {
           key: "tarot2",
           label: t("page.tarot.title"),
-          // href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
-          href: WEB_URL.guestDraw,
+          href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
         },
       ],
     },
@@ -97,7 +96,7 @@ export default function MainLayout({
       label: (
         <div style={{ padding: "4px 8px" }}>
           <Text strong style={{ display: "block" }}>
-            {user?.fullName || t("components.mainLayout.guest")}
+            {user?.fullName || t("component.mainLayout.guest")}
           </Text>
           <Text type="secondary" style={{ fontSize: "12px" }}>
             {user?.email}
@@ -111,7 +110,7 @@ export default function MainLayout({
       key: "logout",
       danger: true,
       icon: <LogoutOutlined />,
-      label: t("components.mainLayout.logout"),
+      label: t("component.mainLayout.logout"),
       onClick: () => {
         mutate(undefined, {
           onSuccess: () => navigate(WEB_URL.guestHome, { replace: true }),

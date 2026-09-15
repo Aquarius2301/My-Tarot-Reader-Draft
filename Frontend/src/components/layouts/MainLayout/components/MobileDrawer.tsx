@@ -96,15 +96,15 @@ export default function MobileDrawer({
           }}
         >
           <Text style={{ color: palette.textSecondary }}>
-            {t("components.mainLayout.theme")}
+            {t("component.mainLayout.theme")}
           </Text>
           <Button
             icon={themeMode === "dark" ? <SunOutlined /> : <MoonOutlined />}
             onClick={onToggleTheme}
           >
             {themeMode === "dark"
-              ? t("components.mainLayout.lightMode")
-              : t("components.mainLayout.darkMode")}
+              ? t("component.mainLayout.lightMode")
+              : t("component.mainLayout.darkMode")}
           </Button>
         </div>
 
@@ -116,12 +116,12 @@ export default function MobileDrawer({
           }}
         >
           <Text style={{ color: palette.textSecondary }}>
-            {t("components.mainLayout.language")}
+            {t("component.mainLayout.language")}
           </Text>
           <Button icon={<GlobalOutlined />} onClick={onToggleLanguage}>
             {String(langMode) === "vi"
-              ? t("components.mainLayout.vietnamese")
-              : t("components.mainLayout.english")}
+              ? t("component.mainLayout.vietnamese")
+              : t("component.mainLayout.english")}
           </Button>
         </div>
 
@@ -134,7 +134,7 @@ export default function MobileDrawer({
             onClick={onLogout}
             style={{ marginTop: "8px" }}
           >
-            {t("components.mainLayout.logout")}
+            {t("component.mainLayout.logout")}
           </Button>
         ) : (
           <Button
@@ -143,7 +143,7 @@ export default function MobileDrawer({
             onClick={onLogin}
             style={{ marginTop: "8px" }}
           >
-            {t("components.mainLayout.login")}
+            {t("component.mainLayout.login")}
           </Button>
         )}
       </div>

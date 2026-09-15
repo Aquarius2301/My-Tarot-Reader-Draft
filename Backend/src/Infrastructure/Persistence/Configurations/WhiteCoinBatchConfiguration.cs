@@ -19,11 +19,11 @@ public class WhiteCoinBatchConfiguration : IEntityTypeConfiguration<WhiteCoinBat
         {
             t.HasCheckConstraint(
                 name: "CK_WhiteCoinBatches_Amount_NonNegative",
-                sql: "Amount >= 0"
+                sql: "\"Amount\" >= 0"
             );
             t.HasCheckConstraint(
                 name: "CK_WhiteCoinBatches_RemainingAmount_NonNegative",
-                sql: "RemainingAmount >= 0"
+                sql: "\"RemainingAmount\" >= 0"
             );
         });
 

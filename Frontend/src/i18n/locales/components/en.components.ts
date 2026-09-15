@@ -1,5 +1,5 @@
 export const enComponents = {
-  components: {
+  component: {
     mainLayout: {
       login: "Sign in",
       logout: "Sign out",

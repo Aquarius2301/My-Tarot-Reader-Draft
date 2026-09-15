@@ -10,3 +10,13 @@ export interface CreateDrawForGuestRequest {
   cardCode: TarotCardCode;
   isReversed: boolean;
 }
+
+export interface GetLastDrawnCardForAuthResult {
+  cardCode: TarotCardCode;
+  isReversed: boolean;
+}
+
+export interface CreateDrawForAuthRequest {
+  cardCode: TarotCardCode;
+  isReversed: boolean;
+}

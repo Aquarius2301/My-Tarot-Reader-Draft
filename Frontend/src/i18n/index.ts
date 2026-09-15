@@ -6,6 +6,8 @@ import { viComponents } from "./locales/components/vi.components";
 import { enComponents } from "./locales/components/en.components";
 import { viTarot } from "./locales/tarot/vi.tarot";
 import { enTarot } from "./locales/tarot/en.tarot";
+import { viErrors } from "./locales/errors/vi.errors";
+import { enErrors } from "./locales/errors/en.errors";
 
 /**
  * Merge tarot meanings data into i18n resources under tarot.meanings
@@ -17,6 +19,7 @@ function buildResources() {
         ...viPages,
         ...viComponents,
         ...viTarot,
+        ...viErrors,
       },
     },
     en: {
@@ -24,6 +27,7 @@ function buildResources() {
         ...enPages,
         ...enComponents,
         ...enTarot,
+        ...enErrors,
       },
     },
   };

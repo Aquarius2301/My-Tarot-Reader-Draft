@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Apply EF Core migrations to the database (requires SQL Server running: 'docker compose up -d').
+# Apply EF Core migrations to the database (requires PostgreSQL running).
 # Usage: ./update-database.sh [configuration]
 #   configuration : Debug (default) | Release
 set -euo pipefail

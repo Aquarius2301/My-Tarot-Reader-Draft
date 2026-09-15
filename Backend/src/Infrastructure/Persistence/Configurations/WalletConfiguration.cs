@@ -15,7 +15,7 @@ public class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         builder.Property(x => x.UpdatedAt).IsRequired();
 
         builder.ToTable(t =>
-            t.HasCheckConstraint(name: "CK_Wallets_RedCoin_NonNegative", sql: "RedCoin >= 0")
+            t.HasCheckConstraint(name: "CK_Wallets_RedCoin_NonNegative", sql: "\"RedCoin\" >= 0")
         );
 
         builder
