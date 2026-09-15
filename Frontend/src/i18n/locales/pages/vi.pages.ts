@@ -30,6 +30,7 @@ export const viPages = {
         "Đăng nhập để lưu giữ thông điệp và kết nối sâu sắc hơn với năng lượng vũ trụ.",
       welcomeTitle: "Chào mừng bạn quay lại",
       welcomeSubtitle: "Đăng nhập nhanh chóng bằng tài khoản Google.",
+      googleSignIn: "Đăng nhập với Google",
       googleLoginError: "Đăng nhập Google thất bại. Vui lòng thử lại.",
       benefit: {
         ai: {

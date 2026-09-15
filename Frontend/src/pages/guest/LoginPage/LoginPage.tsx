@@ -1,15 +1,12 @@
-import { App, Card, Row, Spin, theme } from "antd";
+import { Card, Row, theme } from "antd";
 import {
   CompassOutlined, // Replaces SparklesOutlined
   StarOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useLogin } from "@/hooks/api";
 import { BenefitsPanel, GoogleLoginPanel } from "./components";
-import { useNavigate } from "react-router-dom";
 import type { ReactNode } from "react";
-import { WEB_URL } from "@/routes";
 
 // Interface to avoid the 'readonly' issue with Antd List
 export interface BenefitItem {
@@ -20,25 +17,8 @@ export interface BenefitItem {
 }
 
 export default function LoginPage() {
-  const { t, i18n } = useTranslation();
-  const { mutate, isPending } = useLogin();
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { message } = App.useApp();
-
-  const handleGoogleLogin = (credential: string) => {
-    mutate(
-      { credential, locale: i18n.language },
-      {
-        onSuccess: () => {
-          navigate(WEB_URL.home, { replace: true });
-        },
-        onError: () => {
-          message.error(t("page.login.googleLoginError"));
-        },
-      },
-    );
-  };
 
   const loginBenefits: BenefitItem[] = [
     {
@@ -89,12 +69,9 @@ export default function LoginPage() {
           <GoogleLoginPanel
             welcomeTitle={t("page.login.welcomeTitle")}
             welcomeSubtitle={t("page.login.welcomeSubtitle")}
-            onLogin={handleGoogleLogin}
           />
         </Row>
       </Card>
-
-      {isPending && <Spin fullscreen />}
     </div>
   );
 }

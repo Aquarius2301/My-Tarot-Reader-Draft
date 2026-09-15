@@ -13,6 +13,7 @@ import { WEB_URL } from "./url.routes";
 const HomePage = lazy(() => import("@/pages/auth/HomePage"));
 const GuestHomePage = lazy(() => import("@/pages/guest/HomePage"));
 const LoginPage = lazy(() => import("@/pages/guest/LoginPage"));
+const LoginCallbackPage = lazy(() => import("@/pages/guest/LoginCallbackPage"));
 const GuestDrawTarotPage = lazy(() => import("@/pages/guest/TarotPage"));
 const DrawTarotPage = lazy(() => import("@/pages/auth/TarotPage"));
 
@@ -37,6 +38,11 @@ const publicRoutes: AppRoute[] = [
     titleKey: "page.tarot.title",
     path: WEB_URL.guestTarot,
     component: GuestDrawTarotPage,
+  },
+  {
+    titleKey: "page.login.title",
+    path: WEB_URL.loginCallback,
+    component: LoginCallbackPage,
   },
 ];
 const protectedRoutes: AppRoute[] = [
@@ -64,6 +70,17 @@ export default function AppRouter() {
         }
       >
         <Routes>
+          {/* Full-screen OAuth redirect landing; lives outside the layouts so a
+            redirected Google auth result never flashes inside the app shell. */}
+          {/* <Route
+            path={WEB_URL.loginCallback}
+            element={
+              <RouteTitle titleKey="page.login.title">
+                <LoginCallbackPage />
+              </RouteTitle>
+            }
+          /> */}
+
           {/* Public routes render inside PublicRoute's MainLayout via <Outlet/>.
             ProtectedRoute redirects unauthenticated users to WEB_URL.HOME. */}
           <Route element={<PublicRoute />}>

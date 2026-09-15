@@ -30,6 +30,7 @@ export const enPages = {
         "Sign in to preserve your messages and connect more deeply with the energy of the universe.",
       welcomeTitle: "Welcome back",
       welcomeSubtitle: "Sign in quickly with your Google account.",
+      googleSignIn: "Sign in with Google",
       googleLoginError: "Google sign-in failed. Please try again.",
       benefit: {
         ai: {

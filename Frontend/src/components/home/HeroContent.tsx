@@ -50,8 +50,7 @@ export default function HeroContent({ role }: HeroContentProps) {
       <Space size="middle" wrap>
         <Button
           onClick={() => {
-            // navigate(role ? WEB_URL.DRAW : WEB_URL.DRAW_GUEST);
-            navigate(WEB_URL.guestDraw);
+            navigate(role ? WEB_URL.tarot : WEB_URL.guestTarot);
           }}
           type="primary"
           size="large"
