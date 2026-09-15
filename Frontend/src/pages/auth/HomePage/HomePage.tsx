@@ -1,4 +1,4 @@
-import { HeroSection } from "@/components";
+import { HeroSection } from "@/pages/shared/home";
 import { useGetCurrentUser } from "@/hooks/api";
 import { Spin } from "antd";
 
