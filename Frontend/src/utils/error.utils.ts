@@ -2,7 +2,6 @@ import i18n from "@/i18n";
 import type { ApiErrorResponse, ValidationError } from "@/types";
 import { toCamelCase } from "./common.utils";
 import type { FormInstance } from "antd";
-// import type { FieldData } from "rc-field-form/lib/interface";
 
 function translateErrorMessage(code: string): string {
   return i18n.exists(code)

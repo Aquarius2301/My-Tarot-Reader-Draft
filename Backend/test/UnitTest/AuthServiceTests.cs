@@ -341,12 +341,12 @@ public class AuthServiceTests
     }
 
     /// <summary>
-    /// If a refresh token already exists for the same user+device, login reuses that
-    /// row (resetting its expiry) instead of creating a new token; a new token is still
-    /// returned for the session.
+    /// If a refresh token already exists for the same user+device, login soft-deletes
+    /// that token (rotating it) and issues a fresh one, so only a single active token
+    /// remains per device.
     /// </summary>
     [Fact]
-    public async Task GoogleLoginAsync_ExistingRefreshToken_SameDevice_UpdatesExpiration()
+    public async Task GoogleLoginAsync_ExistingRefreshToken_SameDevice_RotatesOldToken()
     {
         var (service, db, _, _) = CreateSut();
         var (user, _) = await SeedUserAsync(db);
@@ -358,15 +358,13 @@ public class AuthServiceTests
             DateTimeOffset.UtcNow.AddDays(-1)
         );
 
-        var before = DateTimeOffset.UtcNow;
         var result = await service.GoogleLoginAsync(NewLoginRequest(), "device-1");
-        var after = DateTimeOffset.UtcNow;
 
-        var old = db.RefreshTokens.Single(rt => rt.Token == "old-token");
-        old.ExpiresAt.Should()
-            .BeOnOrAfter(before.AddDays(DefaultJwt.RefreshTokenDurationDays))
-            .And.BeOnOrBefore(after.AddDays(DefaultJwt.RefreshTokenDurationDays));
-        db.RefreshTokens.Should().HaveCount(2);
+        var old = db.RefreshTokens.IgnoreQueryFilters().Single(rt => rt.Token == "old-token");
+        old.DeletedAt.Should().NotBeNull();
+        db.RefreshTokens.Should().ContainSingle(
+            rt => rt.DeviceFingerprint == "device-1" && !rt.DeletedAt.HasValue
+        );
         result.RefreshToken.Should().Be(RefreshToken);
     }
 

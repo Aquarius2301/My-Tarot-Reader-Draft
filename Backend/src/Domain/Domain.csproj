@@ -8,8 +8,4 @@
     <RootNamespace>MyTarotReader.Domain</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="Entities/AITarotReading.cs" />
-  </ItemGroup>
-
 </Project>

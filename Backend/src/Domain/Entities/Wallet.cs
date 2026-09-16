@@ -12,7 +12,7 @@ public class Wallet : BaseEntity
     /// </summary>
     public int RedCoin { get; set; } = 0;
 
-    public DateTimeOffset UpdatedAt { get; set; }
+    public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     #region Navigation Properties
 

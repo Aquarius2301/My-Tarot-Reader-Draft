@@ -1,5 +1,5 @@
 import {
-  Error,
+  ErrorComponent,
   TarotCard,
   TarotDeck,
   type SpreadResultItem,
@@ -11,7 +11,7 @@ import {
 import { TarotMeaningCard } from "@/pages/shared/tarot";
 import { WEB_URL } from "@/routes";
 import { convertSecondsToHours } from "@/utils";
-import { getErrorMessage } from "@/utils/error.utils";
+import { getErrorMessage } from "@/utils";
 import { Button, message, Spin, Typography } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -42,7 +42,8 @@ export default function GuestTarotPage() {
     return <Spin fullscreen />;
   }
 
-  if (data === undefined) return <Error type="server" onRetry={refetch} />;
+  if (data === undefined)
+    return <ErrorComponent type="server" onRetry={refetch} />;
 
   if (data == null) {
     return (

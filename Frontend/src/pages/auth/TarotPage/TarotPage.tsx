@@ -1,12 +1,12 @@
 import {
-  Error,
+  ErrorComponent,
   TarotCard,
   TarotDeck,
   type SpreadResultItem,
 } from "@/components";
 import { useCreateDrawForAuth, useGetLastDrawnCardForAuth } from "@/hooks/api";
 import { TarotMeaningCard } from "@/pages/shared/tarot";
-import { getErrorMessage } from "@/utils/error.utils";
+import { getErrorMessage } from "@/utils";
 import { Button, message, Spin, Typography } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,7 +39,8 @@ export default function AuthTarotPage() {
     return <Spin fullscreen />;
   }
 
-  if (data === undefined) return <Error type="server" onRetry={refetch} />;
+  if (data === undefined)
+    return <ErrorComponent type="server" onRetry={refetch} />;
 
   if (data == null || reDraw) {
     return (

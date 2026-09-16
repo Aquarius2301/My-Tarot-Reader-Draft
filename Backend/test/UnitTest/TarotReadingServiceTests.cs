@@ -475,6 +475,107 @@ public class TarotReadingServiceTests
         );
     }
 
+    /// <summary>
+    /// An empty/whitespace guest key (missing "X-Device-Id" header) is rejected before
+    /// Redis is touched — the service throws a <see cref="BadRequestException"/> with the
+    /// InvalidGuestKey code, so header-less clients cannot share a single draw slot.
+    /// </summary>
+    [Fact]
+    public async Task CreateDrawForGuest_EmptyKey_ThrowsBadRequest()
+    {
+        var (service, dbMock) = CreateSut();
+
+        var act = async () =>
+            await service.CreateDrawForGuestAsync(
+                new CreateDrawForGuestRequest(ValidCard, false),
+                ""
+            );
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidGuestKey);
+        dbMock.Verify(
+            d =>
+                d.StringSetAsync(
+                    It.IsAny<RedisKey>(),
+                    It.IsAny<RedisValue>(),
+                    It.IsAny<TimeSpan?>(),
+                    It.IsAny<When>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Never
+        );
+    }
+
+    /// <summary>
+    /// A whitespace-only guest key is treated the same as empty — rejected with
+    /// InvalidGuestKey, Redis never touched.
+    /// </summary>
+    [Fact]
+    public async Task CreateDrawForGuest_WhitespaceKey_ThrowsBadRequest()
+    {
+        var (service, dbMock) = CreateSut();
+
+        var act = async () =>
+            await service.CreateDrawForGuestAsync(
+                new CreateDrawForGuestRequest(ValidCard, false),
+                "   "
+            );
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidGuestKey);
+        dbMock.Verify(
+            d =>
+                d.StringSetAsync(
+                    It.IsAny<RedisKey>(),
+                    It.IsAny<RedisValue>(),
+                    It.IsAny<TimeSpan?>(),
+                    It.IsAny<When>(),
+                    It.IsAny<CommandFlags>()
+                ),
+            Times.Never
+        );
+    }
+
+    /// <summary>
+    /// Reading the last draw with an empty guest key is rejected with InvalidGuestKey.
+    /// </summary>
+    [Fact]
+    public async Task GetLastDrawnCardForGuest_EmptyKey_ThrowsBadRequest()
+    {
+        var (service, dbMock) = CreateSut();
+
+        var act = async () => await service.GetLastDrawnCardForGuestAsync("");
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidGuestKey);
+        dbMock.Verify(
+            d => d.StringGetWithExpiryAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()),
+            Times.Never
+        );
+    }
+
+    /// <summary>
+    /// Removing a draw with an empty guest key is rejected with InvalidGuestKey.
+    /// </summary>
+    [Fact]
+    public async Task RemoveDrawForGuest_EmptyKey_ThrowsBadRequest()
+    {
+        var (service, dbMock) = CreateSut();
+
+        var act = async () => await service.RemoveDrawForGuestAsync("");
+
+        await act.Should()
+            .ThrowAsync<BadRequestException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.InvalidGuestKey);
+        dbMock.Verify(
+            d => d.KeyDeleteAsync(It.IsAny<RedisKey>(), It.IsAny<CommandFlags>()),
+            Times.Never
+        );
+    }
+
     #endregion
 
     #region GetAllReadingAsync

@@ -82,17 +82,6 @@ export default function AppRouter() {
         }
       >
         <Routes>
-          {/* Full-screen OAuth redirect landing; lives outside the layouts so a
-            redirected Google auth result never flashes inside the app shell. */}
-          {/* <Route
-            path={WEB_URL.loginCallback}
-            element={
-              <RouteTitle titleKey="page.login.title">
-                <LoginCallbackPage />
-              </RouteTitle>
-            }
-          /> */}
-
           {/* Public routes render inside PublicRoute's MainLayout via <Outlet/>.
             ProtectedRoute redirects unauthenticated users to WEB_URL.HOME. */}
           <Route element={<PublicRoute />}>

@@ -1,11 +1,9 @@
 import { Empty, Typography, theme, App, Spin } from "antd";
 import { useTranslation } from "react-i18next";
-
 import { useState } from "react";
 import { useDeleteHistory, useGetAllReading } from "@/hooks/api";
 import type { CardData, GetAllReadingItem } from "@/types";
-
-import { getErrorMessage } from "@/utils/error.utils";
+import { getErrorMessage } from "@/utils";
 import {
   DeleteReadingModal,
   TarotCardItem,

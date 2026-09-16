@@ -65,7 +65,6 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
     )]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetLastDrawnCardForGuestAsync(
-        // [FromQuery] string guestKey,
         CancellationToken cancellationToken
     )
     {

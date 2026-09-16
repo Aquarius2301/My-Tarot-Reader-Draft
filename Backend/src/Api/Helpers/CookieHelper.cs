@@ -55,6 +55,7 @@ public static class CookieHelper
             new CookieOptions
             {
                 Path = "/",
+                HttpOnly = true,
                 SameSite = SameSiteMode.None,
                 Secure = true,
             }

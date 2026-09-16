@@ -98,9 +98,7 @@ public class AuthService(
 
         if (existingToken != null)
         {
-            existingToken.ExpiresAt = DateTimeOffset.UtcNow.AddDays(
-                _jwtSetting.RefreshTokenDurationDays
-            );
+            existingToken.DeletedAt = DateTimeOffset.UtcNow;
         }
 
         AddRefreshToken(user, deviceFingerprint, refreshToken);

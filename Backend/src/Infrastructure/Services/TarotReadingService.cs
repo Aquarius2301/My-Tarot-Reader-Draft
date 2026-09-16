@@ -68,6 +68,8 @@ public class TarotReadingService(
         CancellationToken cancellationToken = default
     )
     {
+        ValidateGuestKey(guestKey);
+
         ValidationHelper.ValidateOrThrow(_createDrawForGuestValidator, request);
 
         var db = _redis.GetDatabase();
@@ -98,6 +100,8 @@ public class TarotReadingService(
         CancellationToken cancellationToken = default
     )
     {
+        ValidateGuestKey(guestKey);
+
         var db = _redis.GetDatabase();
         var key = KeyPrefix + guestKey;
         var result = await db.StringGetWithExpiryAsync(key);
@@ -129,6 +133,8 @@ public class TarotReadingService(
         CancellationToken cancellationToken = default
     )
     {
+        ValidateGuestKey(guestKey);
+
         var db = _redis.GetDatabase();
         var key = KeyPrefix + guestKey;
         await db.KeyDeleteAsync(key);
@@ -163,5 +169,19 @@ public class TarotReadingService(
 
         record.DeletedAt = DateTimeOffset.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Validates that the guest key is present, since a missing "X-Device-Id" header
+    /// would otherwise share a single Redis draw slot across all header-less clients.
+    /// </summary>
+    /// <param name="guestKey">The guest device identifier from the "X-Device-Id" header.</param>
+    /// <exception cref="BadRequestException">Thrown when the guest key is empty or whitespace.</exception>
+    private static void ValidateGuestKey(string guestKey)
+    {
+        if (string.IsNullOrWhiteSpace(guestKey))
+        {
+            throw new BadRequestException(TarotReadingErrorCode.InvalidGuestKey);
+        }
     }
 }

@@ -49,15 +49,7 @@ const ERROR_CONFIG: Record<
   },
 };
 
-/**
- * Full-bleed error screen that displays an icon, title, description, and an
- * optional retry button.  Supports four error types: offline, server, timeout,
- * and generic.
- *
- * When `type` is omitted the component auto-detects the offline state via
- * `navigator.onLine` and online/offline window events.
- */
-export default function Error({ type, onRetry }: ErrorProps) {
+export default function ErrorComponent({ type, onRetry }: ErrorProps) {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
