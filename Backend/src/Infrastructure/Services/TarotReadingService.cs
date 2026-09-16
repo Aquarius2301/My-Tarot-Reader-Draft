@@ -93,7 +93,7 @@ public class TarotReadingService(
 
     record DrawRecord(long DrawnAtUnixSeconds, string CardCode, bool IsReversed);
 
-    public async Task<GetLastDrawnCardForGuestResult> GetLastDrawnCardForGuestAsync(
+    public async Task<GetLastDrawnCardForGuestResult?> GetLastDrawnCardForGuestAsync(
         string guestKey,
         CancellationToken cancellationToken = default
     )
@@ -103,27 +103,25 @@ public class TarotReadingService(
         var result = await db.StringGetWithExpiryAsync(key);
         if (!result.Value.HasValue)
         {
-            return new GetLastDrawnCardForGuestResult("", false, 0);
+            return null;
         }
 
         long remaining =
             result.Expiry?.TotalSeconds > 0 ? (long)result.Expiry.Value.TotalSeconds : 0;
 
-        DrawRecord? record;
+        DrawRecord? record = null;
         try
         {
             record = JsonSerializer.Deserialize<DrawRecord>(result.Value!);
         }
         catch (JsonException)
         {
-            record = null;
+            return null;
         }
 
-        return new GetLastDrawnCardForGuestResult(
-            record?.CardCode ?? "",
-            record?.IsReversed ?? false,
-            remaining
-        );
+        return record == null
+            ? null
+            : new GetLastDrawnCardForGuestResult(record.CardCode, record.IsReversed, remaining);
     }
 
     public async Task RemoveDrawForGuestAsync(

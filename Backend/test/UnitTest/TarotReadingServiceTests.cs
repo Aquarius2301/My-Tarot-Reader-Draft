@@ -243,16 +243,17 @@ public class TarotReadingServiceTests
 
         var result = await service.GetLastDrawnCardForGuestAsync("guest-1");
 
-        result.CardCode.Should().Be(ValidCard);
+        result.Should().NotBeNull();
+        result!.CardCode.Should().Be(ValidCard);
         result.IsReversed.Should().BeTrue();
         result.RemainingSeconds.Should().Be((long)remaining.TotalSeconds);
     }
 
     /// <summary>
-    /// A guest with no draw (or an expired one) gets an empty result, not null.
+    /// A guest with no draw (or an expired one) gets a null result.
     /// </summary>
     [Fact]
-    public async Task GetLastDrawnCardForGuest_NoDraw_ReturnsEmpty()
+    public async Task GetLastDrawnCardForGuest_NoDraw_ReturnsNull()
     {
         var (service, dbMock) = CreateSut();
         dbMock
@@ -261,9 +262,7 @@ public class TarotReadingServiceTests
 
         var result = await service.GetLastDrawnCardForGuestAsync("guest-1");
 
-        result.CardCode.Should().BeEmpty();
-        result.IsReversed.Should().BeFalse();
-        result.RemainingSeconds.Should().Be(0);
+        result.Should().BeNull();
     }
 
     #endregion
@@ -579,7 +578,8 @@ public class TarotReadingServiceTests
         var result = await service.GetAllReadingAsync(userA);
 
         result.Items.Should().HaveCount(2);
-        result.Items.Should()
+        result
+            .Items.Should()
             .AllSatisfy(x => x.CardCode.Should().BeOneOf(ValidCard, "min-wands-1"));
     }
 
@@ -707,7 +707,7 @@ public class TarotReadingServiceTests
     /// TarotReadingErrorCode.NotFound code.
     /// </summary>
     [Fact]
-    public async Task DeleteReadingAsync_HistoryIdNotExist_ThrowsNotFound()
+    public async Task DeleteReadingAsync_ReadingIdNotExist_ThrowsNotFound()
     {
         var (service, _, _) = CreateAuthSut();
         var userId = Guid.NewGuid();

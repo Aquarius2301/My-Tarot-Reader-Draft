@@ -1,4 +1,4 @@
-import { Empty, Typography, theme, App } from "antd";
+import { Empty, Typography, theme, App, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { useState } from "react";
@@ -21,7 +21,7 @@ export default function HistoryPage() {
   const { token } = theme.useToken();
   const { message } = App.useApp();
 
-  const { data } = useGetAllReading();
+  const { data, isLoading } = useGetAllReading();
   const { mutate, isPending } = useDeleteHistory();
 
   const [modalType, setModalType] = useState<ModalType>(null);
@@ -53,6 +53,10 @@ export default function HistoryPage() {
       },
     });
   };
+
+  if (isLoading) {
+    return <Spin fullscreen />;
+  }
 
   return (
     <div

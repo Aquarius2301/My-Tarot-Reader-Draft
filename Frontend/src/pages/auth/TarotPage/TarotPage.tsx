@@ -4,17 +4,17 @@ import {
   TarotDeck,
   type SpreadResultItem,
 } from "@/components";
-import { TAROT_SECTIONS } from "@/constants/tarot.constants";
 import { useCreateDrawForAuth, useGetLastDrawnCardForAuth } from "@/hooks/api";
+import { TarotMeaningCard } from "@/pages/shared/tarot";
 import { getErrorMessage } from "@/utils/error.utils";
-import { Button, Card, message, Spin, Typography } from "antd";
+import { Button, message, Spin, Typography } from "antd";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 const { Title } = Typography;
 
 export default function AuthTarotPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data, isLoading, refetch } = useGetLastDrawnCardForAuth();
   const { mutate, isPending } = useCreateDrawForAuth();
   const [reDraw, setReDraw] = useState(false);
@@ -60,9 +60,6 @@ export default function AuthTarotPage() {
 
   const name = t(`tarot.meaning.${data.cardCode}.name`);
 
-  const meaningKey = (section: string) =>
-    `tarot.meaning.${data.cardCode}.${data.isReversed ? "reversed" : "upright"}.${section}`;
-
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
       <Typography.Title level={3}>{t("page.tarot.yourCard")}</Typography.Title>
@@ -86,7 +83,9 @@ export default function AuthTarotPage() {
         {name} · {orientation}
       </Title>
 
-      <Card style={{ textAlign: "left", marginTop: 16 }}>
+      <TarotMeaningCard cardCode={data.cardCode} isReversed={data.isReversed} />
+
+      {/* <Card style={{ textAlign: "left", marginTop: 16 }}>
         {TAROT_SECTIONS.map((section) => {
           const key = meaningKey(section);
           const text = i18n.exists(key)
@@ -103,7 +102,7 @@ export default function AuthTarotPage() {
             </div>
           );
         })}
-      </Card>
+      </Card> */}
 
       <Button onClick={() => setReDraw(true)} style={{ marginTop: 16 }}>
         {t("page.tarot.drawAgain")}

@@ -4,7 +4,7 @@ namespace MyTarotReader.Application.Constants.Errors;
 
 public class TarotReadingErrorCode
 {
-    private const string Prefix = "error.tarotReading.";
+    private const string Prefix = "error.tarot.";
 
     public const string InvalidCardCode = $"{Prefix}invalidCardCode";
     public const string InvalidGuestKey = $"{Prefix}invalidGuestKey";

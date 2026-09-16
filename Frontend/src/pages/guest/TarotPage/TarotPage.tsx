@@ -4,22 +4,22 @@ import {
   TarotDeck,
   type SpreadResultItem,
 } from "@/components";
-import { TAROT_SECTIONS } from "@/constants/tarot.constants";
 import {
   useCreateDrawForGuest,
   useGetLastDrawnCardForGuest,
 } from "@/hooks/api";
+import { TarotMeaningCard } from "@/pages/shared/tarot";
 import { WEB_URL } from "@/routes";
 import { convertSecondsToHours } from "@/utils";
 import { getErrorMessage } from "@/utils/error.utils";
-import { Button, Card, message, Spin, Typography } from "antd";
+import { Button, message, Spin, Typography } from "antd";
 import { Trans, useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
 export default function GuestTarotPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { data, isLoading, refetch } = useGetLastDrawnCardForGuest();
   const { mutate, isPending } = useCreateDrawForGuest();
   //   const { message } = App.useApp();
@@ -42,9 +42,9 @@ export default function GuestTarotPage() {
     return <Spin fullscreen />;
   }
 
-  if (!data) return <Error type="server" onRetry={refetch} />;
+  if (data === undefined) return <Error type="server" onRetry={refetch} />;
 
-  if (data.remainingSeconds <= 0) {
+  if (data == null) {
     return (
       <div style={{ maxWidth: 960, margin: "0 auto" }}>
         <Title level={3} style={{ textAlign: "center" }}>
@@ -63,8 +63,8 @@ export default function GuestTarotPage() {
 
   const name = t(`tarot.meaning.${data.cardCode}.name`);
 
-  const meaningKey = (section: string) =>
-    `tarot.meaning.${data.cardCode}.${data.isReversed ? "reversed" : "upright"}.${section}`;
+  // const meaningKey = (section: string) =>
+  //   `tarot.meaning.${data.cardCode}.${data.isReversed ? "reversed" : "upright"}.${section}`;
 
   const { hours, minutes } = convertSecondsToHours(data.remainingSeconds);
   return (
@@ -106,7 +106,9 @@ export default function GuestTarotPage() {
         {name} · {orientation}
       </Title>
 
-      <Card style={{ textAlign: "left", marginTop: 16 }}>
+      <TarotMeaningCard cardCode={data.cardCode} isReversed={data.isReversed} />
+
+      {/* <Card style={{ textAlign: "left", marginTop: 16 }}>
         {TAROT_SECTIONS.map((section) => {
           const key = meaningKey(section);
           const text = i18n.exists(key)
@@ -123,7 +125,7 @@ export default function GuestTarotPage() {
             </div>
           );
         })}
-      </Card>
+      </Card> */}
     </div>
   );
 }

@@ -8,7 +8,7 @@ export const viErrors = {
       notFound: "Tài nguyên được yêu cầu không được tìm thấy.",
       conflict: "Xung đột với trạng thái hiện tại. Vui lòng thử lại sau.",
     },
-    tarotReading: {
+    tarot: {
       drawnAlready: "Bạn đã rút một lá bài cho trải bài này.",
       notFound: "Không tìm thấy trải bài này.",
     },

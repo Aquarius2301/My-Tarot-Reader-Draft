@@ -67,7 +67,7 @@ public interface ITarotReadingService
     /// <param name="guestKey">The guest key.</param>
     /// <returns><see cref="GetLastDrawnCardForGuestResult"/> containing the card information and remaining cooldown time.</returns>
     /// <remarks>The card code is retrieved from redis instead of the database for guest users.</remarks>
-    Task<GetLastDrawnCardForGuestResult> GetLastDrawnCardForGuestAsync(
+    Task<GetLastDrawnCardForGuestResult?> GetLastDrawnCardForGuestAsync(
         string guestKey,
         CancellationToken cancellationToken = default
     );

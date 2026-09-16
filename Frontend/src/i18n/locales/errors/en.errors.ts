@@ -8,7 +8,7 @@ export const enErrors = {
       notFound: "The requested resource was not found.",
       conflict: "Conflict with the current state. Please try again later.",
     },
-    tarotReading: {
+    tarot: {
       drawnAlready: "You have already drawn a card for this reading.",
       notFound: "The reading was not found.",
     },

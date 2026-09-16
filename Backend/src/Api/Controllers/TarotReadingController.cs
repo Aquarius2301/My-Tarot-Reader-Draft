@@ -75,6 +75,7 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
             guestKey,
             cancellationToken
         );
+
         return Ok(ApiResponse.Success(availability));
     }
 
