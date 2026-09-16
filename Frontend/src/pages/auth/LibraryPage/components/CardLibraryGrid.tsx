@@ -63,8 +63,7 @@ export default function CardLibraryGrid({
               backdropFilter: "blur(10px)",
               boxShadow: token.boxShadowTertiary,
               cursor: "pointer",
-              transition:
-                "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+              transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
             <div

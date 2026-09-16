@@ -9,4 +9,5 @@ public class TarotReadingErrorCode
     public const string InvalidCardCode = $"{Prefix}invalidCardCode";
     public const string InvalidGuestKey = $"{Prefix}invalidGuestKey";
     public const string DrawnAlready = $"{Prefix}drawnAlready";
+    public const string NotFound = $"{Prefix}notFound";
 }

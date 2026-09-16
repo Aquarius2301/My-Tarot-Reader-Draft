@@ -1,2 +1,2 @@
 export * from "./auth.api";
-export * from "./tarotReading.api";
+export * from "./tarot.api";

@@ -7,4 +7,5 @@ export const WEB_URL = {
   home: "/",
   tarot: "/tarot",
   library: "/library",
+  history: "/history",
 } as const;

@@ -22,16 +22,28 @@ public record GetLastDrawnCardForGuestResult(
 /// <summary>
 /// Request for tarot reading services for authenticated users.
 /// </summary>
-/// <param name="CardCode"></param>
-/// <param name="IsReversed"></param>
 public record CreateDrawForAuthRequest(string CardCode, bool IsReversed);
 
 /// <summary>
 /// Result of retrieving the last drawn tarot card for an authenticated user.
 /// </summary>
-/// <param name="CardCode"></param>
-/// <param name="IsReversed"></param>
 public record GetLastDrawnCardForAuthResult(string CardCode, bool IsReversed);
+
+/// <summary>
+/// Represents an individual tarot reading entry for a user.
+/// </summary>
+public record GetAllReadingItem(
+    Guid Id,
+    string CardCode,
+    bool IsReversed,
+    DateTimeOffset CreatedAt
+);
+
+/// <summary>
+/// Result of retrieving all tarot readings for a user.
+/// </summary>
+/// <param name="Items"></param>
+public record GetAllReadingResult(List<GetAllReadingItem> Items);
 
 public interface ITarotReadingService
 {
@@ -89,4 +101,26 @@ public interface ITarotReadingService
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <remarks>This method is intended for testing purposes only and should not be used in production.</remarks>
     Task RemoveDrawForGuestAsync(string guestKey, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves all tarot readings for a specific user.
+    /// </summary>
+    /// <param name="userId">The ID of the user for whom to retrieve the readings.</param>
+    /// <returns><see cref="GetAllTarotReadingResult"/> containing the user's tarot reading history.</returns>
+    Task<GetAllReadingResult> GetAllReadingAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    /// Deletes a specific tarot reading entry for a user.
+    /// </summary>
+    /// <param name="userId">The ID of the user for whom to delete the reading entry.</param>
+    /// <param name="readingId">The ID of the reading entry to delete.</param>
+    /// <exception cref="NotFoundException">Thrown when the specified reading entry does not exist for the user.</exception>
+    Task DeleteReadingAsync(
+        Guid userId,
+        Guid readingId,
+        CancellationToken cancellationToken = default
+    );
 }

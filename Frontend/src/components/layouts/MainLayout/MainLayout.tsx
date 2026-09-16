@@ -87,6 +87,11 @@ export default function MainLayout({
       ],
     },
     user && {
+      key: "history",
+      label: t("page.history.title"),
+      href: WEB_URL.history,
+    },
+    user && {
       key: "library",
       label: t("page.library.title"),
       href: WEB_URL.library,

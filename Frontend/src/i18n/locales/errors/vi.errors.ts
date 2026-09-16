@@ -10,6 +10,7 @@ export const viErrors = {
     },
     tarotReading: {
       drawnAlready: "Bạn đã rút một lá bài cho trải bài này.",
+      notFound: "Không tìm thấy trải bài này.",
     },
   },
 };

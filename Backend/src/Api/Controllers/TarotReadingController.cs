@@ -123,4 +123,40 @@ public class TarotReadingController(ITarotReadingService service) : ControllerBa
         await _service.RemoveDrawForGuestAsync(guestKey, cancellationToken);
         return Ok(ApiResponse.Success());
     }
+
+    /// <summary>
+    /// Retrieves all tarot readings for the authenticated user.
+    /// </summary>
+    [HttpGet]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiResponse<GetAllReadingResult>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> GetAllReadingAsync(CancellationToken cancellationToken)
+    {
+        var userId = JwtHelper.GetUserId(HttpContext);
+
+        var history = await _service.GetAllReadingAsync(userId, cancellationToken);
+
+        return Ok(ApiResponse.Success(history));
+    }
+
+    /// <summary>
+    /// Deletes a specific reading entry for the authenticated user.
+    /// </summary>
+    [HttpDelete("{readingId:guid}")]
+    [Authorize]
+    [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteReadingAsync(
+        Guid readingId,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = JwtHelper.GetUserId(HttpContext);
+
+        await _service.DeleteReadingAsync(userId, readingId, cancellationToken);
+
+        return Ok(ApiResponse.Success());
+    }
 }

@@ -1,6 +1,7 @@
 import { tarotReadingApi } from "@/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
+  GET_ALL_READING_QUERY_KEY,
   GET_CARD_FOR_AUTH_QUERY_KEY,
   GET_CARD_FOR_GUEST_QUERY_KEY,
 } from "./queryKey";
@@ -44,6 +45,24 @@ export const useCreateDrawForAuth = () => {
       tarotReadingApi.createDrawForAuth(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GET_CARD_FOR_AUTH_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: GET_ALL_READING_QUERY_KEY });
+    },
+  });
+};
+
+export const useGetAllReading = () =>
+  useQuery({
+    queryKey: GET_ALL_READING_QUERY_KEY,
+    queryFn: () => tarotReadingApi.getAllReading(),
+  });
+
+export const useDeleteHistory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => tarotReadingApi.deleteReading(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: GET_ALL_READING_QUERY_KEY });
     },
   });
 };

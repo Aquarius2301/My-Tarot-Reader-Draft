@@ -34,6 +34,16 @@ export const enPages = {
       tabPentacles: "Pentacles",
       meaning: "Meanings of {{card}} · {{orientation}}",
     },
+    history: {
+      title: "Your Reading History",
+      subtitle: "Review your past reflections and cosmic insights",
+      empty: "No readings found yet",
+      deleteDescription:
+        "This reading will be permanently deleted. Are you sure you want to delete it?",
+      deleteTitle: "Delete this reading?",
+      deleteConfirm: "Delete reading",
+      deleteSuccess: "Reading deleted",
+    },
     login: {
       title: "Sign in",
       heading: "Unlock your Tarot experience",

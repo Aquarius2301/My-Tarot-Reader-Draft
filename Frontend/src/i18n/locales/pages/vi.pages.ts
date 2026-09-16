@@ -34,6 +34,16 @@ export const viPages = {
       tabPentacles: "Tiền",
       meaning: "Ý nghĩa của {{card}} · {{orientation}}",
     },
+    history: {
+      title: "Lịch sử trải bài",
+      subtitle: "Xem lại các suy nghĩ và góc nhìn vũ trụ đã qua",
+      empty: "Chưa có lượt trải bài nào",
+      deleteDescription:
+        "Trải bài này sẽ bị xóa vĩnh viễn. Bạn có chắc chắn muốn xóa không?",
+      deleteTitle: "Xóa lượt trải bài này?",
+      deleteConfirm: "Xóa lượt trải bài",
+      deleteSuccess: "Đã xóa lượt trải bài",
+    },
     login: {
       title: "Đăng nhập",
       heading: "Mở khóa trải nghiệm Tarot",

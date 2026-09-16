@@ -11,3 +11,4 @@ export const GET_CARD_FOR_AUTH_QUERY_KEY = [
   ...TAROT_READING_QUERY_KEY,
   "getCardForAuth",
 ] as const;
+export const GET_ALL_READING_QUERY_KEY = ["getAll"] as const;

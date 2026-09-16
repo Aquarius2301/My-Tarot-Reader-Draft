@@ -21,6 +21,11 @@ export const enComponents = {
       limitReached: "You can select at most {{n}} cards",
       noEnoughCoin: "You don't have enough coins to draw this spread",
     },
+    modal: {
+      ok: "OK",
+      cancel: "Cancel",
+      delete: "Delete",
+    },
     error: {
       offlineTitle: "You're offline",
       offlineDesc: "Please check your internet connection and try again.",

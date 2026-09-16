@@ -34,7 +34,6 @@ public static class DependencyInjectionExtension
         // Services
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<ITarotReadingService, TarotReadingService>();
-        services.AddScoped<IHistoryService, HistoryService>();
 
         // Validators
         services.AddScoped<

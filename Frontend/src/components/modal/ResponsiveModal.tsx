@@ -1,79 +1,107 @@
 import React from "react";
-import { Modal, Drawer, Grid } from "antd";
-import type { ModalProps } from "antd/es/modal";
-import type { DrawerProps } from "antd/es/drawer";
+import { Modal, Drawer, Button, Grid, Space } from "antd";
+import { useTranslation } from "react-i18next";
 
 const { useBreakpoint } = Grid;
+
+export type ActionButtonType = "cancel" | "ok" | "delete";
+
+export interface ResponsiveModalAction {
+  buttonType: ActionButtonType;
+  handle: () => void;
+  disabled?: boolean;
+  label?: React.ReactNode;
+}
+
+export type ResponsiveModalSize = "sm" | "md" | "lg" | "xl";
 
 export interface ResponsiveModalProps {
   open?: boolean;
   onClose?: () => void;
   title?: React.ReactNode;
   children?: React.ReactNode;
-  footer?: React.ReactNode;
-  modalProps?: Omit<ModalProps, "open" | "onCancel" | "title" | "footer">;
-  drawerProps?: Omit<DrawerProps, "open" | "onClose" | "title" | "footer">;
-  breakpoint?: "xs" | "sm" | "md";
-  drawerPlacement?: DrawerProps["placement"];
+  actions?: ResponsiveModalAction[];
+  loading?: boolean;
+  size?: ResponsiveModalSize;
 }
 
-export default function ResponsiveModal({
+// Độ rộng tối đa cho content theo size (áp dụng cho Modal ở web)
+const SIZE_WIDTH_MAP: Record<ResponsiveModalSize, number> = {
+  sm: 400,
+  md: 600,
+  lg: 800,
+  xl: 1000,
+};
+
+const DEFAULT_SIZE: ResponsiveModalSize = "md";
+
+// Map buttonType -> danger/type mặc định của Antd Button
+const BUTTON_TYPE_CONFIG: Record<
+  ActionButtonType,
+  { type: "primary" | "default"; danger?: boolean }
+> = {
+  ok: { type: "primary" },
+  delete: { type: "primary", danger: true },
+  cancel: { type: "default" },
+};
+
+const ResponsiveModal: React.FC<ResponsiveModalProps> = ({
   open,
   onClose,
   title,
   children,
-  footer,
-  modalProps,
-  drawerProps,
-  breakpoint = "sm",
-  drawerPlacement = "bottom",
-}: ResponsiveModalProps) {
+  actions,
+  loading,
+  size = DEFAULT_SIZE,
+}) => {
+  const { t } = useTranslation();
   const screens = useBreakpoint();
+  const isMobile = !screens.md; // < md thì coi là mobile -> dùng Drawer
 
-  // Define the order of breakpoints from smallest to largest
-  const breakpointOrder: Array<"xs" | "sm" | "md" | "lg" | "xl" | "xxl"> = [
-    "xs",
-    "sm",
-    "md",
-    "lg",
-    "xl",
-    "xxl",
-  ];
-  const thresholdIndex = breakpointOrder.indexOf(breakpoint);
-  const isMobile = !breakpointOrder
-    .slice(thresholdIndex)
-    .some((bp) => screens[bp]);
+  const width = SIZE_WIDTH_MAP[size] ?? SIZE_WIDTH_MAP[DEFAULT_SIZE];
+
+  const handleClose = () => {
+    if (loading) return;
+    onClose?.();
+  };
+
+  const renderFooter = () => {
+    if (!actions || actions.length === 0) return null;
+
+    return (
+      <Space style={{ width: "100%", justifyContent: "flex-end" }} wrap>
+        {actions.map((action, index) => {
+          const config = BUTTON_TYPE_CONFIG[action.buttonType];
+
+          return (
+            <Button
+              key={`${action.buttonType}-${index}`}
+              type={config.type}
+              danger={config.danger}
+              disabled={action.disabled || loading}
+              loading={loading}
+              onClick={action.handle}
+            >
+              {action.label ?? t(`component.modal.${action.buttonType}`)}
+            </Button>
+          );
+        })}
+      </Space>
+    );
+  };
 
   if (isMobile) {
-    // `drawerProps.styles` may be a plain object OR a render function; resolve
-    // the function form so caller styles are preserved on mobile too. We add a
-    // height cap so tall content (e.g. a card meaning list) stays inside the
-    // viewport and the drawer section/body scroll instead of overflowing past
-    // the top on mobile.
-    const callerStyles =
-      typeof drawerProps?.styles === "function"
-        ? drawerProps.styles({ props: drawerProps as DrawerProps })
-        : drawerProps?.styles;
-    const isVertical =
-      drawerPlacement === "bottom" || drawerPlacement === "top";
-
     return (
       <Drawer
         open={open}
-        onClose={onClose}
+        onClose={handleClose}
         title={title}
-        placement={drawerPlacement}
-        size={isVertical ? "auto" : undefined}
-        footer={footer}
-        destroyOnHidden
-        {...drawerProps}
-        styles={{
-          ...callerStyles,
-          section: {
-            maxHeight: isVertical ? "85vh" : undefined,
-            ...callerStyles?.section,
-          },
-        }}
+        placement="bottom"
+        closable={!loading}
+        mask={{ closable: !loading }}
+        keyboard={!loading}
+        footer={renderFooter()}
+        size="auto"
       >
         {children}
       </Drawer>
@@ -83,13 +111,18 @@ export default function ResponsiveModal({
   return (
     <Modal
       open={open}
-      onCancel={onClose}
+      onCancel={handleClose}
       title={title}
-      footer={footer}
+      width={width}
+      closable={!loading}
+      mask={{ closable: !loading }}
+      keyboard={!loading}
+      footer={renderFooter()}
       destroyOnHidden
-      {...modalProps}
     >
       {children}
     </Modal>
   );
-}
+};
+
+export default ResponsiveModal;

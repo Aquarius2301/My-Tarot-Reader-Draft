@@ -10,6 +10,7 @@ export const enErrors = {
     },
     tarotReading: {
       drawnAlready: "You have already drawn a card for this reading.",
+      notFound: "The reading was not found.",
     },
   },
 } as const;

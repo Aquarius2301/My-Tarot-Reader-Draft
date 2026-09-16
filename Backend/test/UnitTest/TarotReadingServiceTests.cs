@@ -477,4 +477,282 @@ public class TarotReadingServiceTests
     }
 
     #endregion
+
+    #region GetAllReadingAsync
+
+    /// <summary>
+    /// A user with readings gets back the full list with every field mapped from the
+    /// stored rows (Id, CardCode, IsReversed, CreatedAt).
+    /// </summary>
+    [Fact]
+    public async Task GetAllReadingAsync_UserHasHistory_ReturnsMappedHistory()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(db, userId);
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = ValidCard,
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = "min-wands-1",
+                IsReversed = true,
+                CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-5),
+            }
+        );
+        await db.SaveChangesAsync();
+
+        var result = await service.GetAllReadingAsync(userId);
+
+        result.Items.Should().HaveCount(2);
+        var first = result.Items.Single(x => x.CardCode == ValidCard);
+        first.CardCode.Should().Be(ValidCard);
+        first.IsReversed.Should().BeFalse();
+
+        var second = result.Items.Single(x => x.CardCode == "min-wands-1");
+        second.IsReversed.Should().BeTrue();
+    }
+
+    /// <summary>
+    /// A user with no readings gets back an empty (non-null) list.
+    /// </summary>
+    [Fact]
+    public async Task GetAllReadingAsync_NoHistory_ReturnsEmptyList()
+    {
+        var (service, _, _) = CreateAuthSut();
+
+        var result = await service.GetAllReadingAsync(Guid.NewGuid());
+
+        result.Should().NotBeNull();
+        result.Items.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// Only readings belonging to the requested user are returned; another user's
+    /// readings are never mixed in.
+    /// </summary>
+    [Fact]
+    public async Task GetAllReadingAsync_OnlyReturnsUsersOwnHistory()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userA = Guid.NewGuid();
+        var userB = Guid.NewGuid();
+        await SeedUserAsync(db, userA);
+        await SeedUserAsync(db, userB);
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userA,
+                CardCode = ValidCard,
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userA,
+                CardCode = "min-wands-1",
+                IsReversed = true,
+                CreatedAt = DateTimeOffset.UtcNow.AddMinutes(-1),
+            }
+        );
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userB,
+                CardCode = "maj-10",
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        await db.SaveChangesAsync();
+
+        var result = await service.GetAllReadingAsync(userA);
+
+        result.Items.Should().HaveCount(2);
+        result.Items.Should()
+            .AllSatisfy(x => x.CardCode.Should().BeOneOf(ValidCard, "min-wands-1"));
+    }
+
+    /// <summary>
+    /// Readings are returned newest-first (ordered by CreatedAt descending).
+    /// </summary>
+    [Fact]
+    public async Task GetAllReadingAsync_ReturnsOrderedByCreatedAtDescending()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(db, userId);
+        var oldest = DateTimeOffset.UtcNow.AddDays(-2);
+        var middle = DateTimeOffset.UtcNow.AddDays(-1);
+        var newest = DateTimeOffset.UtcNow;
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = "oldest",
+                IsReversed = false,
+                CreatedAt = oldest,
+            }
+        );
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = "middle",
+                IsReversed = true,
+                CreatedAt = middle,
+            }
+        );
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = "newest",
+                IsReversed = false,
+                CreatedAt = newest,
+            }
+        );
+        await db.SaveChangesAsync();
+
+        var result = await service.GetAllReadingAsync(userId);
+
+        result.Items.Select(x => x.CreatedAt).Should().Equal(newest, middle, oldest);
+    }
+
+    /// <summary>
+    /// Soft-deleted readings (DeletedAt set) are excluded by the global query filter.
+    /// </summary>
+    [Fact]
+    public async Task GetAllReadingAsync_ExcludesSoftDeletedRecords()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(db, userId);
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = "kept",
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        var deleted = new TarotReading
+        {
+            UserId = userId,
+            CardCode = "deleted",
+            IsReversed = true,
+            CreatedAt = DateTimeOffset.UtcNow,
+        };
+        db.TarotReadings.Add(deleted);
+        await db.SaveChangesAsync();
+
+        deleted.DeletedAt = DateTimeOffset.UtcNow;
+        await db.SaveChangesAsync();
+
+        var result = await service.GetAllReadingAsync(userId);
+
+        result.Items.Should().HaveCount(1);
+        result.Items.Single().CardCode.Should().Be("kept");
+    }
+
+    #endregion
+
+    #region DeleteReadingAsync
+
+    /// <summary>
+    /// Deleting an existing reading soft-deletes it (DeletedAt set) and makes it
+    /// disappear from further GetAllReadingAsync results.
+    /// </summary>
+    [Fact]
+    public async Task DeleteReadingAsync_ExistingRecord_SoftDeletes()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+        await SeedUserAsync(db, userId);
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userId,
+                CardCode = ValidCard,
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        await db.SaveChangesAsync();
+        var reading = db.TarotReadings.Single();
+
+        await service.DeleteReadingAsync(userId, reading.Id);
+
+        db.TarotReadings.IgnoreQueryFilters()
+            .Single(r => r.Id == reading.Id)
+            .DeletedAt.Should()
+            .NotBeNull();
+        var afterDelete = await service.GetAllReadingAsync(userId);
+        afterDelete.Items.Should().BeEmpty();
+    }
+
+    /// <summary>
+    /// A reading id that does not exist throws NotFoundException with the
+    /// TarotReadingErrorCode.NotFound code.
+    /// </summary>
+    [Fact]
+    public async Task DeleteReadingAsync_HistoryIdNotExist_ThrowsNotFound()
+    {
+        var (service, _, _) = CreateAuthSut();
+        var userId = Guid.NewGuid();
+
+        var act = async () => await service.DeleteReadingAsync(userId, Guid.NewGuid());
+
+        await act.Should()
+            .ThrowAsync<NotFoundException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.NotFound);
+    }
+
+    /// <summary>
+    /// A reading that exists but belongs to a different user is treated as not found
+    /// (NotFoundException) and the other user's reading is left untouched.
+    /// </summary>
+    [Fact]
+    public async Task DeleteReadingAsync_RecordBelongsToOtherUser_ThrowsNotFound()
+    {
+        var (service, db, _) = CreateAuthSut();
+        var userA = Guid.NewGuid();
+        var userB = Guid.NewGuid();
+        await SeedUserAsync(db, userA);
+        await SeedUserAsync(db, userB);
+        db.TarotReadings.Add(
+            new TarotReading
+            {
+                UserId = userB,
+                CardCode = ValidCard,
+                IsReversed = false,
+                CreatedAt = DateTimeOffset.UtcNow,
+            }
+        );
+        await db.SaveChangesAsync();
+        var readingB = db.TarotReadings.Single();
+
+        var act = async () => await service.DeleteReadingAsync(userA, readingB.Id);
+
+        await act.Should()
+            .ThrowAsync<NotFoundException>()
+            .Where(e => e.ErrorCode == TarotReadingErrorCode.NotFound);
+        db.TarotReadings.IgnoreQueryFilters()
+            .Single(r => r.Id == readingB.Id)
+            .DeletedAt.Should()
+            .BeNull();
+    }
+
+    #endregion
 }

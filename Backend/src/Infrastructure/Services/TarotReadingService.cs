@@ -135,4 +135,35 @@ public class TarotReadingService(
         var key = KeyPrefix + guestKey;
         await db.KeyDeleteAsync(key);
     }
+
+    public async Task<GetAllReadingResult> GetAllReadingAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var history = await _context
+            .TarotReadings.AsNoTracking()
+            .Where(r => r.UserId == userId)
+            .OrderByDescending(r => r.CreatedAt)
+            .Select(r => new GetAllReadingItem(r.Id, r.CardCode, r.IsReversed, r.CreatedAt))
+            .ToListAsync(cancellationToken);
+
+        return new GetAllReadingResult(history);
+    }
+
+    public async Task DeleteReadingAsync(
+        Guid userId,
+        Guid readingId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var record =
+            await _context.TarotReadings.FirstOrDefaultAsync(
+                r => r.Id == readingId && r.UserId == userId,
+                cancellationToken
+            ) ?? throw new NotFoundException(TarotReadingErrorCode.NotFound);
+
+        record.DeletedAt = DateTimeOffset.UtcNow;
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }
