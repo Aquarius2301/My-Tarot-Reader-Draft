@@ -63,7 +63,6 @@ export default function AuthTarotPage() {
   const meaningKey = (section: string) =>
     `tarot.meaning.${data.cardCode}.${data.isReversed ? "reversed" : "upright"}.${section}`;
 
-  // const { hours, minutes } = convertSecondsToHours(data.remainingSeconds);
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
       <Typography.Title level={3}>{t("page.tarot.yourCard")}</Typography.Title>

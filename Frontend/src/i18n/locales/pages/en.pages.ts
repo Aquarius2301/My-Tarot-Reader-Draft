@@ -23,6 +23,17 @@ export const enPages = {
       cooldown:
         "<strong>Your next draw will be available in {{hours}} hours {{minutes}} minutes. <btn>Log in now</btn> to draw more cards.</strong>",
     },
+    library: {
+      title: "Tarot Card Library",
+      subtitle: "All 78 cards and their upright & reversed meanings",
+      tabMajor: "Major Arcana",
+      tabMinor: "Minor Arcana",
+      tabWands: "Wands",
+      tabCups: "Cups",
+      tabSwords: "Swords",
+      tabPentacles: "Pentacles",
+      meaning: "Meanings of {{card}} · {{orientation}}",
+    },
     login: {
       title: "Sign in",
       heading: "Unlock your Tarot experience",

@@ -15,11 +15,15 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          // Locale tarot (~744KB), seperate chunk to avoid bloating the main bundle
-          if (id.includes("/src/i18n/locales/tarot/")) return "tarot-locales";
+          // 2 files meaning are too big, so split them into two chunks
+          if (id.includes("/src/i18n/locales/tarot/vi.tarot"))
+            return "tarot-locales-vi";
+          if (id.includes("/src/i18n/locales/tarot/en.tarot"))
+            return "tarot-locales-en";
+          // if (id.includes("/src/i18n/locales/tarot")) return "tarot-locales";
           if (id.includes("node_modules")) {
-            if (id.includes("antd") || id.includes("@ant-design"))
-              return "vendor-antd";
+            if (id.includes("antd")) return "vendor-antd";
+            if (id.includes("@ant-design")) return "vendor-ant-design";
             if (id.includes("@tanstack")) return "vendor-tanstack";
             if (id.includes("@fingerprintjs")) return "vendor-fingerprintjs";
             if (id.includes("i18next") || id.includes("react-i18next"))

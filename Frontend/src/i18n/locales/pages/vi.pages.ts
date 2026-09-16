@@ -23,6 +23,17 @@ export const viPages = {
       cooldown:
         "<strong>Lượt rút tiếp theo sẽ mở sau {{hours}} giờ {{minutes}} phút. <btn>Đăng nhập ngay</btn> để rút thêm bài.</strong>",
     },
+    library: {
+      title: "Kho bài Tarot",
+      subtitle: "Tất cả 78 lá bài cùng ý nghĩa xuôi & ngược",
+      tabMajor: "Bộ Ẩn Chính",
+      tabMinor: "Bộ Ẩn Phụ",
+      tabWands: "Gậy",
+      tabCups: "Cốc",
+      tabSwords: "Kiếm",
+      tabPentacles: "Tiền",
+      meaning: "Ý nghĩa của {{card}} · {{orientation}}",
+    },
     login: {
       title: "Đăng nhập",
       heading: "Mở khóa trải nghiệm Tarot",

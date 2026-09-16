@@ -78,7 +78,6 @@ export default function MainLayout({
     {
       key: "tarot",
       label: t("page.tarot.parentTitle"),
-      // href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
       children: [
         {
           key: "tarot2",
@@ -86,6 +85,11 @@ export default function MainLayout({
           href: user ? WEB_URL.tarot : WEB_URL.guestTarot,
         },
       ],
+    },
+    user && {
+      key: "library",
+      label: t("page.library.title"),
+      href: WEB_URL.library,
     },
   ].filter(Boolean) as NavItem[];
 

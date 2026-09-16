@@ -23,7 +23,10 @@ export default function App() {
     <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
       <QueryClientProvider client={queryClient}>
         <AppRouter />
-        <ReactQueryDevtools initialIsOpen={false} />
+        {/* In-app React Query devtools is a solid-state app with its own global
+        transition/MutationObserver handlers; only mount it in dev so it never
+        ships to production. */}
+        {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
     </GoogleOAuthProvider>
   );
