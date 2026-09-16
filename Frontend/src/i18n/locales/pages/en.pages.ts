@@ -1,7 +1,7 @@
 export const enPages = {
   page: {
     home: {
-      title: "Home Page",
+      title: "Home page",
       heroTitle: "Listen to the Messages From",
       heroTitleHighlight: "the Universe & the Cards",
       heroDescription:
@@ -24,7 +24,7 @@ export const enPages = {
         "<strong>Your next draw will be available in {{hours}} hours {{minutes}} minutes. <btn>Log in now</btn> to draw more cards.</strong>",
     },
     library: {
-      title: "Tarot Card Library",
+      title: "Tarot card library",
       subtitle: "All 78 cards and their upright & reversed meanings",
       tabMajor: "Major Arcana",
       tabMinor: "Minor Arcana",
@@ -35,7 +35,7 @@ export const enPages = {
       meaning: "Meanings of {{card}} · {{orientation}}",
     },
     history: {
-      title: "Your Reading History",
+      title: "Your reading history",
       subtitle: "Review your past reflections and cosmic insights",
       empty: "No readings found yet",
       deleteDescription:

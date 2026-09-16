@@ -1,7 +1,6 @@
 import { convertISOToDate } from "@/utils";
 import { Button, Card, Flex, theme } from "antd";
 import { useTranslation } from "react-i18next";
-import { memo } from "react";
 import {
   DeleteOutlined,
   CalendarOutlined,
@@ -22,7 +21,7 @@ interface TarotCardItemProps {
 // Alpha channel (hex) applied to the card's drop-shadow color.
 const CARD_SHADOW_ALPHA = "26";
 
-function TarotCardItem({
+export default function TarotCardItem({
   data,
   setModalType,
   setSelectedCard,
@@ -125,5 +124,3 @@ function TarotCardItem({
     </Card>
   );
 }
-
-export default memo(TarotCardItem);

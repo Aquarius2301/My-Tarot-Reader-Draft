@@ -3,7 +3,7 @@ import { Button, Flex } from "antd";
 import { RetweetOutlined } from "@ant-design/icons";
 import { type TarotCardCode } from "@/constants";
 import { useTranslation } from "react-i18next";
-import { memo, useState } from "react";
+import { useState } from "react";
 import { TarotMeaningCard } from "@/pages/shared/tarot";
 
 interface MeaningModalProps {
@@ -11,7 +11,10 @@ interface MeaningModalProps {
   onSelectedCard: (card: TarotCardCode | null) => void;
 }
 
-function MeaningModal({ selectedCard, onSelectedCard }: MeaningModalProps) {
+export default function MeaningModal({
+  selectedCard,
+  onSelectedCard,
+}: MeaningModalProps) {
   const { t } = useTranslation();
 
   const [isReversed, setIsReversed] = useState(false);
@@ -60,5 +63,3 @@ function MeaningModal({ selectedCard, onSelectedCard }: MeaningModalProps) {
     </ResponsiveModal>
   );
 }
-
-export default memo(MeaningModal);
